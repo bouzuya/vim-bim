@@ -1,3 +1,7 @@
+scriptencoding utf-8
+
+let s:save_cpoptions = &cpoptions
+set cpoptions&vim
 
 let s:ROMAJI2HIRAGANA = bim#table#romaji2hiragana()
 let s:HIRAGANA2KATAKANA = bim#table#hiragana2katakana()
@@ -110,4 +114,7 @@ function! bim#hiragana2katakana(hiragana)
   endfor
   return katakana
 endfunction
+
+let &cpoptions = s:save_cpoptions
+unlet s:save_cpoptions
 
