@@ -5,7 +5,6 @@ set cpoptions&vim
 
 let s:ROMAJI2HIRAGANA = bim#table#romaji2hiragana()
 let s:HIRAGANA2KATAKANA = bim#table#hiragana2katakana()
-let s:DICT_PATH = '~/vim-bim/dict/SKK-JISYO.S.utf8'
 let s:DICT = []
 let s:bim = {}
 
