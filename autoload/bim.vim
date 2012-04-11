@@ -91,9 +91,21 @@ function! s:bim._romaji2hiragana(romaji)
   return h
 endfunction
 
+function! s:get_dict_path()
+  let path = s:get_option('dict_path')
+  return expand(path)
+endfunction
+
+function! s:get_option(name)
+  if !exists('g:bim')
+    let g:bim = {}
+  endif
+  return get(g:bim, a:name, '')
+endfunction
+
 function! bim#new()
   if empty(s:DICT)
-    let path = expand(s:DICT_PATH)
+    let path = s:get_dict_path()
     let dict = readfile(path)
     call filter(dict, 'v:val !~# ''^\s*;''')
     let s:DICT = dict
