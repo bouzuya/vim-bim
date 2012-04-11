@@ -5,7 +5,6 @@ set cpoptions&vim
 
 let s:ROMAJI2HIRAGANA = bim#table#romaji2hiragana()
 let s:HIRAGANA2KATAKANA = bim#table#hiragana2katakana()
-let s:DICT = []
 let s:bim = {}
 
 function! s:bim.raw()
@@ -39,7 +38,7 @@ endfunction
 
 function! s:bim.candidate()
   let keyword = self.yomigana() . self.okuri()[0]
-  return self._search_dict(keyword)
+  return bim#dict#search(keyword)
 endfunction
 
 function! s:bim.input(key)
@@ -69,16 +68,6 @@ function! s:bim.start_okuri()
   let self._okuri_index = strlen(self._raw)
 endfunction
 
-function! s:bim._search_dict(keyword)
-  let dict = self._hiragana2kanji_table
-  let pattern = '^\V' . escape(a:keyword, '\') . '\m\s'
-  let line = matchstr(dict, pattern)
-  let wordstr = substitute(line, '^\S*\s*/\(.*\)/$', '\1', '')
-  let words = split(wordstr, '/')
-  call map(words, 'substitute(v:val, ''^\([^;]*\)'', ''\1'', '''')')
-  return words
-endfunction
-
 function! s:bim._romaji2hiragana(romaji)
   let h = ''
   let m = self._romaji2hiragana_table
@@ -103,18 +92,13 @@ function! s:get_option(name)
 endfunction
 
 function! bim#new()
-  if empty(s:DICT)
-    let path = s:get_dict_path()
-    let dict = readfile(path)
-    call filter(dict, 'v:val !~# ''^\s*;''')
-    let s:DICT = dict
-  endif
+  let path = s:get_dict_path()
+  call bim#dict#load(path)
   let obj = copy(s:bim)
   let obj._okuri_index = -1
   let obj._raw = ''
   let obj._kanji = ''
   let obj._romaji2hiragana_table = s:ROMAJI2HIRAGANA
-  let obj._hiragana2kanji_table = s:DICT
   return obj
 endfunction
 
