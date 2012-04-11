@@ -12,18 +12,12 @@ endfor
 call add(s:HANDLE_KEYS, {'lhs': '<Space>', 'char': ' '})
 call add(s:HANDLE_KEYS, {'lhs': '<Bar>', 'char': '\|'})
 
-function! s:snr()
-  let sfile = expand('<sfile>')
-  return matchstr(sfile, '<SNR>\zs\d\+\ze_snr$')
-endfunction
-
 function! s:is_enabled()
   return &l:iminsert == 1
 endfunction
 
 function! s:enable()
   setlocal iminsert=1
-  let snr = s:snr()
   let b:bim = bim#new()
   for key in s:HANDLE_KEYS
     let lhs = key['lhs']
