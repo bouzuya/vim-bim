@@ -18,6 +18,9 @@ endfunction
 
 function! s:enable()
   setlocal iminsert=1
+
+  call s:load_dict()
+
   let b:bim = bim#new()
   for key in s:HANDLE_KEYS
     let lhs = key['lhs']
@@ -85,6 +88,13 @@ function! s:proc(key)
     redraw | echon printf('%s|%s', kana, roma)
   endif
   return ''
+endfunction
+
+function! s:load_dict()
+  let dict = bim#option#get_path('dict')
+  call bim#dict#load(dict)
+  let user_dict = bim#option#get_path('user_dict')
+  call bim#dict#load_user_dict(user_dict)
 endfunction
 
 command! BimIsEnabled

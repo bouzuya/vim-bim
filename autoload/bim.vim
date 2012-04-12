@@ -79,14 +79,7 @@ function! s:bim._romaji2hiragana(romaji)
   return h
 endfunction
 
-function! s:get_dict_path()
-  let path = bim#option#get('dict_path')
-  return expand(path)
-endfunction
-
 function! bim#new()
-  let path = s:get_dict_path()
-  call bim#dict#load(path)
   let obj = copy(s:bim)
   let obj._okuri_index = -1
   let obj._raw = ''

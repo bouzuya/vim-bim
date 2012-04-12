@@ -22,6 +22,28 @@ function! s:load(path, priority)
   return {'name': path, 'priority': a:priority, 'dict': dict}
 endfunction
 
+function! s:load_once(path, priority)
+  if !s:loaded(a:path)
+    call add(s:dicts, s:load(a:path, a:priority))
+    call sort(s:dicts, function('bim#dict#priority_comparetor'))
+  endif
+endfunction
+
+function! s:user_dict()
+  for dict in s:dicts
+    if dict.priority == 0
+      return dict
+    endif
+  endfor
+  throw 'bim:'
+endfunction
+
+function! bim#dict#add_word(keyword, word)
+  let entry = printf('%s /%s/', a:keyword, a:word)
+  let dict = s:user_dict()
+  call add(dict, entry)
+endfunction
+
 function! bim#dict#search(keyword)
   let results = []
   for dict in s:dicts
@@ -40,13 +62,17 @@ function! bim#dict#clear()
 endfunction
 
 " load({path}[, {priority})
-" 1(low) > 10(high)
+" 1(high) > 10(low)
 function! bim#dict#load(path, ...)
   let priority = get(a:000, 0, 6)
-  if !s:loaded(a:path)
-    call add(s:dicts, s:load(a:path, priority))
-    call sort(s:dicts, function('bim#dict#priority_comparetor'))
+  if priority < 1 || 10 < priority
+    throw 'bim:bim#dict#load():'
   endif
+  call s:load_once(path, priority)
+endfunction
+
+function! bim#dict#load_user_dict(path)
+  call s:load_once(a:path, 0)
 endfunction
 
 function! bim#dict#priority_comparetor(d1, d2)
