@@ -80,15 +80,8 @@ function! s:bim._romaji2hiragana(romaji)
 endfunction
 
 function! s:get_dict_path()
-  let path = s:get_option('dict_path')
+  let path = bim#option#get('dict_path')
   return expand(path)
-endfunction
-
-function! s:get_option(name)
-  if !exists('g:bim')
-    let g:bim = {}
-  endif
-  return get(g:bim, a:name, '')
 endfunction
 
 function! bim#new()
