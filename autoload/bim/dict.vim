@@ -68,7 +68,7 @@ function! bim#dict#load(path, ...)
   if priority < 1 || 10 < priority
     throw 'bim:bim#dict#load():'
   endif
-  call s:load_once(path, priority)
+  call s:load_once(a:path, priority)
 endfunction
 
 function! bim#dict#load_user_dict(path)
@@ -78,7 +78,7 @@ endfunction
 function! bim#dict#priority_comparetor(d1, d2)
   let p1 = a:d1.priority
   let p2 = a:d2.priority
-  return p1 == p2 ? 0 p1 > p2 ? 1 : -1
+  return (p1 == p2 ? 0 : (p1 > p2 ? 1 : -1))
 endfunction
 
 let &cpoptions = s:save_cpoptions
