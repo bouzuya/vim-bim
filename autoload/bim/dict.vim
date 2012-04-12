@@ -17,7 +17,7 @@ endfunction
 
 function! s:load(path, priority)
   let path = expand(a:path)
-  let dict = readfile(path)
+  let dict = filereadable(path) ? readfile(path) : []
   call filter(dict, 'v:val !~# ''^\s*;''')
   return {'name': path, 'priority': a:priority, 'dict': dict}
 endfunction
