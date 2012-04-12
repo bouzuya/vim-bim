@@ -67,7 +67,7 @@ function! s:proc(key)
     return ''
   elseif a:key ==# ';'
     let result = bim.kanji()
-    if len(result) == 0
+    if strchars(result) == 0
       let result = bim.yomigana() . bim.okurigana()
     endif
     let b:bim = bim#new()
