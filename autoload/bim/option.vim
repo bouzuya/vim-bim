@@ -3,14 +3,17 @@ scriptencoding utf-8
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
+let s:DEFAULTS = {
+      \ 'dict_path': '~/SKK-JISYO.S.utf8',
+      \ 'user_dict_path': '~/.vim-bim-jisyo'
+      \ }
+
 function! bim#option#get(name)
   if !exists('g:bim')
-    let g:bim = {
-          \ 'dict_path': '~/SKK-JISYO.S.utf8'
-          \ 'user_dict_path': '~/.vim-bim-jisyo'
-          \ }
+    let g:bim = {}
   endif
-  return get(g:bim, a:name, '')
+  let default = get(s:DEFAULTS, a:name, '')
+  return get(g:bim, a:name, default)
 endfunction
 
 function! bim#option#get_path(name)
