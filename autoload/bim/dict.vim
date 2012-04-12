@@ -26,8 +26,8 @@ function! bim#dict#search(keyword)
   let results = []
   for dict in s:dicts
     let pattern = '^\V' . escape(a:keyword, '\') . '\m\s'
-    let line = matchstr(dict['dict'], pattern)
-    let wordstr = substitute(line, '^\S*\s*/\(.*\)/$', '\1', '')
+    let entry = matchstr(dict['dict'], pattern)
+    let wordstr = substitute(entry, '^\S*\s*/\(.*\)/$', '\1', '')
     let words = split(wordstr, '/')
     call map(words, 'substitute(v:val, ''^\([^;]*\)'', ''\1'', '''')')
     call extend(results, words)
