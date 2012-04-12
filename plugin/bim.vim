@@ -69,6 +69,8 @@ function! s:proc(key)
     let result = bim.kanji()
     if strchars(result) == 0
       let result = bim.yomigana() . bim.okurigana()
+    else
+      call bim#dict#add_word(bim.yomigana(), result)
     endif
     let b:bim = bim#new()
     return result
@@ -108,6 +110,8 @@ command! BimDisable
 
 command! BimToggle
       \ call s:toggle()
+
+autocmd VimLeave * call bim#dict#save()
 
 let &cpoptions = s:save_cpoptions
 unlet! s:save_cpoptions

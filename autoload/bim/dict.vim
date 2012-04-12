@@ -41,7 +41,7 @@ endfunction
 function! bim#dict#add_word(keyword, word)
   let entry = printf('%s /%s/', a:keyword, a:word)
   let dict = s:user_dict()
-  call add(dict, entry)
+  call insert(dict.dict, entry, 0)
 endfunction
 
 function! bim#dict#search(keyword)
@@ -52,7 +52,11 @@ function! bim#dict#search(keyword)
     let wordstr = substitute(entry, '^\S*\s*/\(.*\)/$', '\1', '')
     let words = split(wordstr, '/')
     call map(words, 'substitute(v:val, ''^\([^;]*\)'', ''\1'', '''')')
-    call extend(results, words)
+    for word in words
+      if index(results, word) == -1
+        call add(results, word)
+      endif
+    endfor
   endfor
   return results
 endfunction
@@ -79,6 +83,13 @@ function! bim#dict#priority_comparetor(d1, d2)
   let p1 = a:d1.priority
   let p2 = a:d2.priority
   return (p1 == p2 ? 0 : (p1 > p2 ? 1 : -1))
+endfunction
+
+function! bim#dict#save()
+  let dict = s:user_dict()
+  if filewritable(dict.name)
+    call writefile(dict.dict, dict.name)
+  endif
 endfunction
 
 let &cpoptions = s:save_cpoptions
