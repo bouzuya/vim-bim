@@ -72,7 +72,7 @@ function! s:proc(key)
     call s:echo(bim)
     return ''
   elseif a:key ==# ';'
-    let result = bim.kanji()
+    let result = bim.kanji() . bim.okurigana()
     if strchars(result) == 0
       let result = bim.yomigana() . bim.okurigana()
     else
@@ -89,10 +89,10 @@ function! s:proc(key)
     let b:bim = bim#new()
     return bim#hiragana2katakana(h)
   else
-    if bim.is_okuri() && strlen(bim.okuri()) > 0
+    call bim.input(a:key)
+    if bim.is_okuri() && strchars(bim.okurigana()) > 0
       return s:proc(' ') " convert
     endif
-    call bim.input(a:key)
     call s:echo(bim)
   endif
   return ''
