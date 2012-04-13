@@ -53,12 +53,12 @@ function! s:proc(key)
     call bim.convert()
     let cand = bim.candidate()
     if len(cand) == 0
-      let okuri = bim.is_okuri() ? '*' . bim.okuri() : ''
+      let okuri = bim.is_okuri() ? ':' . bim.okuri() : ''
       echomsg printf('%s is not found', bim.yomigana() . okuri)
       return ''
     else
-      let okuri = bim.is_okuri() ? '*' . bim.okuri() : ''
-      let msg = printf('%s%s|%s|%s', bim.yomigana(), okuri, bim.kanji(), string(cand))
+      let okuri = bim.is_okuri() ? ':' . bim.okurigana() : ''
+      let msg = printf('%s%s|%s|%s', bim.yomigana(), okuri, bim.kanji() . bim.okurigana(), string(cand))
       redraw | echon msg
     endif
   elseif a:key ==# "\<C-[>"
@@ -72,14 +72,14 @@ function! s:proc(key)
     call s:echo(bim)
     return ''
   elseif a:key ==# ';'
-    let result = bim.kanji() . bim.okurigana()
+    let result = bim.kanji()
     if strchars(result) == 0
-      let result = bim.yomigana() . bim.okurigana()
+      let result = bim.yomigana()
     else
       call bim#dict#add_word(bim.yomigana() . bim.okuri()[0], result)
     endif
     let b:bim = bim#new()
-    return result
+    return result . bim.okurigana()
   elseif a:key ==# 'l'
     let result = bim.raw()
     let b:bim = bim#new()
@@ -90,9 +90,6 @@ function! s:proc(key)
     return bim#hiragana2katakana(h)
   else
     call bim.input(a:key)
-    if bim.is_okuri() && strchars(bim.okurigana()) > 0
-      return s:proc(' ') " convert
-    endif
     call s:echo(bim)
   endif
   return ''
@@ -107,10 +104,12 @@ function! s:echo(bim)
 endfunction
 
 function! s:load_dict()
+  redraw | echon 'load dict ...'
   let dict = bim#option#get_path('dict')
   call bim#dict#load(dict)
   let user_dict = bim#option#get_path('user_dict')
   call bim#dict#load(user_dict, 0)
+  redraw | echon 'load dict ... finished.'
 endfunction
 
 command! BimIsEnabled

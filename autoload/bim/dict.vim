@@ -35,11 +35,12 @@ function! s:load_once(path, priority)
 endfunction
 
 function! s:get_entry_index(entries, keyword)
-  for i in range(len(a:entries))
-    let entry = a:entries[i]
+  let i = 0
+  for entry in a:entries
     if entry.keyword() ==# a:keyword
       return i
     endif
+    let i += 1
   endfor
   return -1
 endfunction
@@ -103,6 +104,7 @@ function! bim#dict#add_word(keyword, word)
   else
     let entry = dict.entries[index]
   endif
+  call entry.remove_word(a:word)
   call entry.insert_word(a:word)
 endfunction
 

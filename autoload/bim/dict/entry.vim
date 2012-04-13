@@ -14,7 +14,7 @@ function! bim#dict#entry#parse(entry_string)
 
   let keyword = list[1]
   let words = split(list[2], '/')
-  call map(words, 'substitute(v:val, ''^\([^;]*\)'', ''\1'', '''')')
+  call map(words, 'substitute(v:val, ''^\([^;]*\).*'', ''\1'', '''')')
   return bim#dict#entry#new(keyword, words)
 endfunction
 
@@ -46,6 +46,14 @@ endfunction
 function! s:entry.insert_word(word, ...)
   let idx = get(a:000, 0, 0)
   call insert(self._words, a:word, idx)
+endfunction
+
+function! s:entry.remove_word(word)
+  let idx = index(self._words, a:word)
+  while idx >= 0
+    call remove(self._words, idx)
+    let idx = index(self._words, a:word)
+  endwhile
 endfunction
 
 function! s:entry.add_word(word)
