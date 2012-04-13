@@ -6,13 +6,14 @@ set cpoptions&vim
 let s:entry = {}
 
 function! bim#dict#entry#parse(entry_string)
-  let list = matchlist(a:entry_string, '^\(\S+\)\s/\(.*\)/$')
-  if len(list) != 2
-    throw 'bim:'
+  let list = matchlist(a:entry_string, '^\(\S\+\)\s\+\(.*\)$')
+  if empty(list)
+    let fmt = 'bim:bim#dict#entry#parse():can''t parse ''%s'''
+    throw printf(fmt, a:entry_string)
   endif
 
-  let keyword = list[0]
-  let words = split(list[1], '/')
+  let keyword = list[1]
+  let words = split(list[2], '/')
   call map(words, 'substitute(v:val, ''^\([^;]*\)'', ''\1'', '''')')
   return bim#dict#entry#new(keyword, words)
 endfunction

@@ -59,6 +59,14 @@ function! bim#dict#clear_all_entries()
   let s:dicts = []
 endfunction
 
+function! bim#dict#names()
+  let names = []
+  for dict in s:dicts
+    call add(names, dict.name)
+  endfor
+  return names
+endfunction
+
 " bim#dict#load({path}[, {priority})
 " 0(high) <= priority <= 10(low)
 " 0 : user_dict
@@ -75,8 +83,15 @@ endfunction
 
 function! bim#dict#save()
   let dict = s:user_dict()
-  if filewritable(dict.name)
-    call writefile(dict.dict, dict.name)
+  if strchars(dict.name) > 0
+    let entries = []
+    for entry in dict.entries
+      call add(entries, entry.to_string())
+    endfor
+    echomsg string(entry)
+    if !empty(entries)
+      call writefile(entries, dict.name)
+    endif
   endif
 endfunction
 

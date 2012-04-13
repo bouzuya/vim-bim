@@ -53,7 +53,8 @@ function! s:proc(key)
     call bim.convert()
     let cand = bim.candidate()
     if len(cand) == 0
-      echomsg printf('%s is not found', keyword)
+      let okuri = bim.is_okuri() ? '*' . bim.okuri() : ''
+      echomsg printf('%s is not found', bim.yomigana() . okuri)
       return ''
     else
       let okuri = bim.is_okuri() ? '*' . bim.okuri() : ''
