@@ -76,7 +76,7 @@ function! s:proc(key)
     if strchars(result) == 0
       let result = bim.yomigana() . bim.okurigana()
     else
-      call bim#dict#add_word(bim.yomigana(), result)
+      call bim#dict#add_word(bim.yomigana() . bim.okuri()[0], result)
     endif
     let b:bim = bim#new()
     return result
