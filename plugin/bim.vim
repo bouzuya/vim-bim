@@ -46,7 +46,7 @@ endfunction
 function! s:proc(key)
   let bim = exists('b:bim') ? b:bim : bim#new()
   if a:key == ' '
-    if len(bim.raw()) == 0
+    if strchars(bim.raw()) == 0
       return ' '
     endif
     call bim.convert()
