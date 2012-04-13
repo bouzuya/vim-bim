@@ -64,7 +64,11 @@ function! s:proc(key)
     let b:bim = bim#new()
     return a:key
   elseif a:key ==# ':'
+    if strchars(bim.raw()) == 0
+      return ':'
+    endif
     call bim.start_okuri()
+    call s:echo(bim)
     return ''
   elseif a:key ==# ';'
     let result = bim.kanji()
@@ -84,13 +88,21 @@ function! s:proc(key)
     let b:bim = bim#new()
     return bim#hiragana2katakana(h)
   else
+    if bim.is_okuri() && strlen(bim.okuri()) > 0
+      return s:proc(' ') " convert
+    endif
     call bim.input(a:key)
-    let marker = ':'
-    let kana = bim.yomigana() . (bim.is_okuri() ? ':' . bim.okurigana() : '')
-    let roma = bim.yomi() . (bim.is_okuri() ? ':' . bim.okuri() : '')
-    redraw | echon printf('%s|%s', kana, roma)
+    call s:echo(bim)
   endif
   return ''
+endfunction
+
+function! s:echo(bim)
+  let bim = a:bim
+  let marker = ':'
+  let kana = bim.yomigana() . (bim.is_okuri() ? marker . bim.okurigana() : '')
+  let roma = bim.yomi() . (bim.is_okuri() ? marker . bim.okuri() : '')
+  redraw | echon printf('%s|%s', kana, roma)
 endfunction
 
 function! s:load_dict()
