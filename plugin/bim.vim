@@ -53,8 +53,8 @@ function! s:proc(key)
     call bim.convert()
     let cand = bim.candidate()
     if len(cand) == 0
-      let kanji = input(printf('[ユーザー辞書登録]読み:%s,漢字 ?', bim.yomigana()))
-      redraw | echon printf('%s|%s', bim.yomigana(), kanji)
+      echomsg printf('%s is not found', keyword)
+      return ''
     else
       let okuri = bim.is_okuri() ? '*' . bim.okuri() : ''
       let msg = printf('%s%s|%s|%s', bim.yomigana(), okuri, bim.kanji(), string(cand))
