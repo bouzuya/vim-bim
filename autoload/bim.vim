@@ -42,7 +42,7 @@ function! s:bim.candidate()
 endfunction
 
 function! s:bim.input(key)
-  if a:key !~# '^[-[:alnum:]]$'
+  if a:key !~# '^[-.,[:alnum:]]$'
     throw 'bim:bim.input():'
   endif
   let self._raw .= a:key
