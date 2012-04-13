@@ -109,7 +109,7 @@ function! s:load_dict()
   let dict = bim#option#get_path('dict')
   call bim#dict#load(dict)
   let user_dict = bim#option#get_path('user_dict')
-  call bim#dict#load_user_dict(user_dict)
+  call bim#dict#load(user_dict, 0)
 endfunction
 
 command! BimIsEnabled

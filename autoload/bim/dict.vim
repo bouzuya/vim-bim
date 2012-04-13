@@ -17,9 +17,14 @@ endfunction
 
 function! s:load(path, priority)
   let path = expand(a:path)
-  let dict = filereadable(path) ? readfile(path) : []
-  call filter(dict, 'v:val !~# ''^\s*;''')
-  return {'name': path, 'priority': a:priority, 'dict': dict}
+  let lines = filereadable(path) ? readfile(path) : []
+  call filter(lines, 'v:val !~# ''^\s*;''')
+  let entries = []
+  for line in lines
+    let entry = bim#dict#entry#parse(line)
+    call add(entries, entry)
+  endfor
+  return {'name': path, 'priority': a:priority, 'entries': entries}
 endfunction
 
 function! s:load_once(path, priority)
@@ -29,30 +34,86 @@ function! s:load_once(path, priority)
   endif
 endfunction
 
+function! s:get_entry_index(entries, keyword)
+  for i in range(len(a:entries))
+    let entry = a:entries[i]
+    if entry.keyword() ==# a:keyword
+      return i
+    endif
+  endfor
+  return -1
+endfunction
+
 function! s:user_dict()
   for dict in s:dicts
     if dict.priority == 0
       return dict
     endif
   endfor
-  throw 'bim:'
+  let dict = {'name': '', 'priority': 0, 'entries': []}
+  call insert(s:dicts, dict)
+  return dict
+endfunction
+
+function! bim#dict#clear_all_entries()
+  let s:dicts = []
+endfunction
+
+" bim#dict#load({path}[, {priority})
+" 0(high) <= priority <= 10(low)
+" 0 : user_dict
+function! bim#dict#load(path, ...)
+  if strchars(a:path) == 0
+    throw 'bim:bim#dict#load():'
+  endif
+  let priority = get(a:000, 0, 6)
+  if priority < 0 || 10 < priority
+    throw 'bim:bim#dict#load():'
+  endif
+  call s:load_once(a:path, priority)
+endfunction
+
+function! bim#dict#save()
+  let dict = s:user_dict()
+  if filewritable(dict.name)
+    call writefile(dict.dict, dict.name)
+  endif
 endfunction
 
 function! bim#dict#add_word(keyword, word)
-  let entry = printf('%s /%s/', a:keyword, a:word)
   let dict = s:user_dict()
-  call insert(dict.dict, entry, 0)
+  let index = s:get_entry_index(dict.entries, a:keyword)
+  if index == -1
+    let entry = bim#dict#entry#new(a:keyword)
+    call insert(dict.entries, entry)
+  else
+    let entry = dict.entries[index]
+  endif
+  call entry.insert_word(a:word)
+endfunction
+
+function! bim#dict#add_words(keyword, words)
+  throw 'bim:'
+endfunction
+
+function! bim#dict#add_entry(entry)
+  throw 'bim:'
+endfunction
+
+function! bim#dict#add_entries(entries)
+  throw 'bim:'
 endfunction
 
 function! bim#dict#search(keyword)
   let results = []
   for dict in s:dicts
-    let pattern = '^\V' . escape(a:keyword, '\') . '\m\s'
-    let entry = matchstr(dict['dict'], pattern)
-    let wordstr = substitute(entry, '^\S*\s*/\(.*\)/$', '\1', '')
-    let words = split(wordstr, '/')
-    call map(words, 'substitute(v:val, ''^\([^;]*\)'', ''\1'', '''')')
-    for word in words
+    let index = s:get_entry_index(dict.entries, a:keyword)
+    if index == -1
+      continue
+    endif
+
+    let entry = dict.entries[index]
+    for word in entry.words()
       if index(results, word) == -1
         call add(results, word)
       endif
@@ -61,35 +122,10 @@ function! bim#dict#search(keyword)
   return results
 endfunction
 
-function! bim#dict#clear()
-  let s:dicts = {}
-endfunction
-
-" load({path}[, {priority})
-" 1(high) > 10(low)
-function! bim#dict#load(path, ...)
-  let priority = get(a:000, 0, 6)
-  if priority < 1 || 10 < priority
-    throw 'bim:bim#dict#load():'
-  endif
-  call s:load_once(a:path, priority)
-endfunction
-
-function! bim#dict#load_user_dict(path)
-  call s:load_once(a:path, 0)
-endfunction
-
 function! bim#dict#priority_comparetor(d1, d2)
   let p1 = a:d1.priority
   let p2 = a:d2.priority
   return (p1 == p2 ? 0 : (p1 > p2 ? 1 : -1))
-endfunction
-
-function! bim#dict#save()
-  let dict = s:user_dict()
-  if filewritable(dict.name)
-    call writefile(dict.dict, dict.name)
-  endif
 endfunction
 
 let &cpoptions = s:save_cpoptions
