@@ -11,6 +11,7 @@ endfor
 " call add(s:HANDLE_KEYS, {'lhs': '<C-h>', 'char': "\<C-h>"})
 call add(s:HANDLE_KEYS, {'lhs': '<Space>', 'char': ' '})
 call add(s:HANDLE_KEYS, {'lhs': '<Bar>', 'char': '\|'})
+call add(s:HANDLE_KEYS, {'lhs': '<Esc>', 'char': "\<C-[>"})
 
 function! s:is_enabled()
   return &l:iminsert == 1
@@ -59,7 +60,7 @@ function! s:proc(key)
       let msg = printf('%s%s|%s|%s', bim.yomigana(), okuri, bim.kanji(), string(cand))
       redraw | echon msg
     endif
-  elseif a:key ==# "\<Esc>"
+  elseif a:key ==# "\<C-[>"
     let b:bim = bim#new()
     return a:key
   elseif a:key ==# ':'
