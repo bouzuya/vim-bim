@@ -65,7 +65,7 @@ function! s:bim.start_okuri()
   if strchars(self._raw) == 0
     throw 'bim:bim.start_okuri():'
   endif
-  let self._okuri_index = strlen(self._raw)
+  let self._okuri_index = strchars(self._raw)
 endfunction
 
 function! s:bim._romaji2hiragana(romaji)
