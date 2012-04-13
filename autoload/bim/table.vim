@@ -285,6 +285,7 @@ function! bim#table#hiragana2katakana()
   let table["\u3094"] = "\u30F4"
   let table["\u3095"] = "\u30F5"
   let table["\u3096"] = "\u30F6"
+  let table["\u30FC"] = "\u30FC"
   let table["\u309D"] = "\u30FD"
   let table["\u309E"] = "\u30FE"
   return table
