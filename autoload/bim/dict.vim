@@ -19,10 +19,10 @@ function! s:load(path, priority)
   let path = expand(a:path)
   let lines = filereadable(path) ? readfile(path) : []
   call filter(lines, 'v:val !~# ''^\s*;''')
-  let entries = []
+  let entries = {}
   for line in lines
     let entry = bim#dict#entry#parse(line)
-    call add(entries, entry)
+    let entries[entry.keyword()] = entry
   endfor
   return {'name': path, 'priority': a:priority, 'entries': entries}
 endfunction
@@ -34,24 +34,13 @@ function! s:load_once(path, priority)
   endif
 endfunction
 
-function! s:get_entry_index(entries, keyword)
-  let i = 0
-  for entry in a:entries
-    if entry.keyword() ==# a:keyword
-      return i
-    endif
-    let i += 1
-  endfor
-  return -1
-endfunction
-
 function! s:user_dict()
   for dict in s:dicts
     if dict.priority == 0
       return dict
     endif
   endfor
-  let dict = {'name': '', 'priority': 0, 'entries': []}
+  let dict = {'name': '', 'priority': 0, 'entries': {}}
   call insert(s:dicts, dict)
   return dict
 endfunction
@@ -86,7 +75,8 @@ function! bim#dict#save()
   let dict = s:user_dict()
   if strchars(dict.name) > 0
     let entries = []
-    for entry in dict.entries
+    for keyword in keys(dict.entries)
+      let entry = dict.entries[keyword]
       call add(entries, entry.to_string())
     endfor
     if !empty(entries)
@@ -97,12 +87,11 @@ endfunction
 
 function! bim#dict#add_word(keyword, word)
   let dict = s:user_dict()
-  let index = s:get_entry_index(dict.entries, a:keyword)
-  if index == -1
-    let entry = bim#dict#entry#new(a:keyword)
-    call insert(dict.entries, entry)
+  if has_key(dict.entries, a:keyword)
+    let entry = dict.entries[a:keyword]
   else
-    let entry = dict.entries[index]
+    let entry = bim#dict#entry#new(a:keyword)
+    let dict.entries[a:keyword] = entry
   endif
   call entry.remove_word(a:word)
   call entry.insert_word(a:word)
@@ -123,12 +112,11 @@ endfunction
 function! bim#dict#search(keyword)
   let results = []
   for dict in s:dicts
-    let index = s:get_entry_index(dict.entries, a:keyword)
-    if index == -1
+    if !has_key(dict.entries, a:keyword)
       continue
     endif
 
-    let entry = dict.entries[index]
+    let entry = dict.entries[a:keyword]
     for word in entry.words()
       if index(results, word) == -1
         call add(results, word)
