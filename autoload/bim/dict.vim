@@ -88,7 +88,6 @@ function! bim#dict#save()
     for entry in dict.entries
       call add(entries, entry.to_string())
     endfor
-    echomsg string(entry)
     if !empty(entries)
       call writefile(entries, dict.name)
     endif
