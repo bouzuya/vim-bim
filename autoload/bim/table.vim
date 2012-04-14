@@ -1,7 +1,9 @@
-function! bim#table#romaji2hiragana()
-  let table = {}
+
+function! bim#table#raw2kana()
+  let root = {'mapping': {}}
+  let table = root['mapping']
   let table['a'] = {'fixed': "\u3042"}
-  let table['b'] = {'mapping': {'mapping': {}}}
+  let table['b'] = {'mapping': {}}
   let table['b']['mapping']['a'] = {'fixed': "\u3070"}
   let table['b']['mapping']['i'] = {'fixed': "\u3073"}
   let table['b']['mapping']['u'] = {'fixed': "\u3076"}
@@ -57,7 +59,7 @@ function! bim#table#romaji2hiragana()
   let table['m']['mapping']['u'] = {'fixed': "\u3080"}
   let table['m']['mapping']['e'] = {'fixed': "\u3081"}
   let table['m']['mapping']['o'] = {'fixed': "\u3082"}
-  let table['n'] = {'mapping': {}}
+  let table['n'] = {'mapping': {}, 'rest': "\u3093"}
   let table['n']['mapping']['a'] = {'fixed': "\u306A"}
   let table['n']['mapping']['i'] = {'fixed': "\u306B"}
   let table['n']['mapping']['u'] = {'fixed': "\u306C"}
@@ -206,7 +208,7 @@ function! bim#table#romaji2hiragana()
   let table['n']['mapping']['w'] = {'fixed': "\u3093", 'mapping': table['w']['mapping']}
   let table['n']['mapping']['x'] = {'fixed': "\u3093", 'mapping': table['x']['mapping']}
   let table['n']['mapping']['z'] = {'fixed': "\u3093", 'mapping': table['z']['mapping']}
-  return table
+  return root
 endfunction
 
 function! bim#table#hiragana2katakana()

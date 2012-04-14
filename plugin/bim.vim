@@ -11,7 +11,8 @@ endfor
 " call add(s:HANDLE_KEYS, {'lhs': '<C-h>', 'char': "\<C-h>"})
 call add(s:HANDLE_KEYS, {'lhs': '<Space>', 'char': ' '})
 call add(s:HANDLE_KEYS, {'lhs': '<Bar>', 'char': '\|'})
-call add(s:HANDLE_KEYS, {'lhs': '<Esc>', 'char': "\<C-[>"})
+call add(s:HANDLE_KEYS, {'lhs': '<C-[>', 'char': "\<C-[>"})
+call add(s:HANDLE_KEYS, {'lhs': '<C-m>', 'char': "\<C-m>"})
 
 function! s:is_enabled()
   return &l:iminsert == 1
@@ -71,7 +72,7 @@ function! s:proc(key)
     call bim.start_okuri()
     call s:echo(bim)
     return ''
-  elseif a:key ==# ';'
+  elseif a:key ==# ';' || a:key ==# "\<C-m>"
     let result = bim.kanji()
     if strchars(result) == 0
       let result = bim.yomigana()
@@ -93,6 +94,10 @@ function! s:proc(key)
     call s:echo(bim)
   endif
   return ''
+endfunction
+
+function! s:proc2(arg)
+  return {'result': ''}
 endfunction
 
 function! s:echo(bim)

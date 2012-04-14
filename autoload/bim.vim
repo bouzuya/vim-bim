@@ -3,7 +3,7 @@ scriptencoding utf-8
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
-let s:ROMAJI2HIRAGANA = bim#table#romaji2hiragana()
+let s:RAW2KANA = bim#table#raw2kana()
 let s:HIRAGANA2KATAKANA = bim#table#hiragana2katakana()
 let s:bim = {}
 
@@ -13,7 +13,7 @@ endfunction
 
 function! s:bim.yomi()
   let index = self._okuri_index - 1
-  return index > 0 ? self._raw[:index] : self._raw
+  return index >= 0 ? self._raw[:index] : self._raw
 endfunction
 
 function! s:bim.okuri()
@@ -21,12 +21,21 @@ function! s:bim.okuri()
 endfunction
 
 function! s:bim.yomigana()
-  return self._romaji2hiragana(self.yomi())
+  return get(self._romaji2hiragana(self.yomi()), 'hiragana', '')
 endfunction
 
 function! s:bim.okurigana()
-  return self._romaji2hiragana(self.okuri())
+  return get(self._romaji2hiragana(self.okuri()), 'hiragana', '')
 endfunction
+
+function! s:bim.yomirest()
+  return get(self._romaji2hiragana(self.yomi()), 'rest', '')
+endfunction
+
+function! s:bim.okurirest()
+  return get(self._romaji2hiragana(self.okuri()), 'rest', '')
+endfunction
+
 
 function! s:bim.kanji()
   return self._kanji
@@ -69,14 +78,25 @@ function! s:bim.start_okuri()
 endfunction
 
 function! s:bim._romaji2hiragana(romaji)
-  let h = ''
-  let m = self._romaji2hiragana_table
+  let root = s:RAW2KANA
+  let fixed = ''
+  let rest = ''
+  let dict = root
   for key in split(a:romaji, '\zs')
-    let m = get(m, key, {})
-    let h .= get(m, 'fixed', '')
-    let m = get(m, 'mapping', self._romaji2hiragana_table)
+    " dict = {'mapping': {key: dict}, 'fixed': '', 'else': dict}
+    let rest = dict is root ? key : rest . key
+    let m = get(dict, 'mapping', get(root, 'mapping', {}))
+    let e = get(dict, 'else', root)
+    let n = get(m, key, e)
+    let fixed .= get(n, 'fixed', '')
+    let rest = !has_key(n, 'mapping') ? '' : rest
+    let dict = n
   endfor
-  return h
+  if self.is_okuri()
+    let fixed .= get(dict, 'rest', '')
+    let rest = ''
+  endif
+  return {'hiragana': fixed, 'rest': rest}
 endfunction
 
 function! bim#new()
@@ -84,7 +104,6 @@ function! bim#new()
   let obj._okuri_index = -1
   let obj._raw = ''
   let obj._kanji = ''
-  let obj._romaji2hiragana_table = s:ROMAJI2HIRAGANA
   return obj
 endfunction
 
