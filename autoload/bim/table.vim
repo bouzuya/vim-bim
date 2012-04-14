@@ -138,6 +138,7 @@ function! bim#table#romaji2hiragana()
   let table['~'] = {'fixed': "\u301C"}
   let table[','] = {'fixed': "\u3001"}
   let table['.'] = {'fixed': "\u3002"}
+
   " sign
   let table['z']['mapping']['h'] = {'fixed': "\u2190"}
   let table['z']['mapping']['j'] = {'fixed': "\u2193"}
@@ -168,14 +169,25 @@ function! bim#table#romaji2hiragana()
   let table['x']['mapping']['x'] = {'fixed': "\u3063", 'mapping': table['x']['mapping']}
   let table['y']['mapping']['y'] = {'fixed': "\u3063", 'mapping': table['y']['mapping']}
   let table['z']['mapping']['z'] = {'fixed': "\u3063", 'mapping': table['z']['mapping']}
+
   " youon
+  let table['b']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3073\u3083"}, 'u': {'fixed': "\u3073\u3085"}, 'o': {'fixed': "\u3073\u3087"}}}
+  let table['d']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3062\u3083"}, 'u': {'fixed': "\u3062\u3085"}, 'o': {'fixed': "\u3062\u3087"}}}
+  let table['f']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3075\u3083"}, 'u': {'fixed': "\u3075\u3085"}, 'o': {'fixed': "\u3075\u3087"}}}
+  let table['g']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u304E\u3083"}, 'u': {'fixed': "\u304E\u3085"}, 'o': {'fixed': "\u304E\u3087"}}}
+  let table['h']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3072\u3083"}, 'u': {'fixed': "\u3072\u3085"}, 'o': {'fixed': "\u3072\u3087"}}}
+  let table['j']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3058\u3083"}, 'u': {'fixed': "\u3058\u3085"}, 'o': {'fixed': "\u3058\u3087"}}}
   let table['k']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u304D\u3083"}, 'u': {'fixed': "\u304D\u3085"}, 'o': {'fixed': "\u304D\u3087"}}}
+  " let table['l']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3083"}, 'u': {'fixed': "\u3085"}, 'o': {'fixed': "\u3087"}}}
+  let table['m']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u307F\u3083"}, 'u': {'fixed': "\u307F\u3085"}, 'o': {'fixed': "\u307F\u3087"}}}
+  let table['n']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u306B\u3083"}, 'u': {'fixed': "\u306B\u3085"}, 'o': {'fixed': "\u306B\u3087"}}}
+  let table['r']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u308A\u3083"}, 'u': {'fixed': "\u308A\u3085"}, 'o': {'fixed': "\u308A\u3087"}}}
   let table['s']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3057\u3083"}, 'u': {'fixed': "\u3057\u3085"}, 'o': {'fixed': "\u3057\u3087"}}}
   let table['t']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3061\u3083"}, 'u': {'fixed': "\u3061\u3085"}, 'o': {'fixed': "\u3061\u3087"}}}
-  let table['n']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u306B\u3083"}, 'u': {'fixed': "\u306B\u3085"}, 'o': {'fixed': "\u306B\u3087"}}}
-  let table['h']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3072\u3083"}, 'u': {'fixed': "\u3072\u3085"}, 'o': {'fixed': "\u3072\u3087"}}}
-  let table['m']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u307F\u3083"}, 'u': {'fixed': "\u307F\u3085"}, 'o': {'fixed': "\u307F\u3087"}}}
-  let table['r']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u308A\u3083"}, 'u': {'fixed': "\u308A\u3085"}, 'o': {'fixed': "\u308A\u3087"}}}
+  let table['v']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3094\u3083"}, 'u': {'fixed': "\u3094\u3085"}, 'o': {'fixed': "\u3094\u3087"}}}
+  let table['w']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3046\u3083"}, 'u': {'fixed': "\u3046\u3085"}, 'o': {'fixed': "\u3046\u3087"}}}
+  let table['x']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3083"}, 'u': {'fixed': "\u3085"}, 'o': {'fixed': "\u3087"}}}
+  let table['z']['mapping']['y'] = {'mapping': {'a': {'fixed': "\u3058\u3083"}, 'u': {'fixed': "\u3058\u3085"}, 'o': {'fixed': "\u3058\u3087"}}}
   " n + shiin
   let table['n']['mapping']['b'] = {'fixed': "\u3093", 'mapping': table['b']['mapping']}
   let table['n']['mapping']['d'] = {'fixed': "\u3093", 'mapping': table['d']['mapping']}
