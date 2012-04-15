@@ -58,9 +58,7 @@ function! s:proc(key)
       echomsg printf('%s is not found', bim.yomigana() . okuri)
       return ''
     else
-      let okuri = bim.is_okuri() ? ':' . bim.okurigana() : ''
-      let msg = printf('%s%s|%s|%s', bim.yomigana(), okuri, bim.kanji() . bim.okurigana(), string(cand))
-      redraw | echon msg
+      call s:echo(bim)
     endif
   elseif a:key ==# "\<C-[>"
     let b:bim = bim#new()
@@ -105,11 +103,19 @@ function! s:proc2(arg)
 endfunction
 
 function! s:echo(bim)
-  let bim = a:bim
-  let marker = ':'
-  let kana = bim.yomigana() . (bim.is_okuri() ? marker . bim.okurigana() : '')
-  let roma = bim.yomi() . (bim.is_okuri() ? marker . bim.okuri() : '')
-  redraw | echon printf('%s|%s', kana, roma)
+  let save_more = &more
+  try
+    set nomore
+    let bim = a:bim
+    let is_conv = strchars(bim.kanji()) > 0
+    let i = printf('[%s]%s', bim.yomi(), bim.okuri())
+    let o = printf('[%s]%s', (is_conv ? bim.kanji() : bim.yomigana()), bim.okurigana())
+    let l1 = printf('%s|%s', o, i)
+    let l2 = string(bim.candidate()[:7])
+    redraw | echon l1 . "\n" . l2
+  finally
+    let &more = save_more
+  endtry
 endfunction
 
 function! s:load_dict()
