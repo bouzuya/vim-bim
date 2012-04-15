@@ -36,7 +36,6 @@ function! s:bim.okurirest()
   return get(self._romaji2hiragana(self.okuri()), 'rest', '')
 endfunction
 
-
 function! s:bim.kanji()
   return self._kanji
 endfunction
@@ -51,9 +50,6 @@ function! s:bim.candidate()
 endfunction
 
 function! s:bim.input(key)
-  if a:key !~# '^[-.,[:alnum:]]$'
-    throw 'bim:bim.input():'
-  endif
   let self._raw .= a:key
 endfunction
 
