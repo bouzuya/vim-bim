@@ -53,6 +53,14 @@ function! s:bim.input(key)
   let self._raw .= a:key
 endfunction
 
+function! s:bim.remove_last()
+  if self._okuri_index == strchars(self._raw)
+    let self._okuri_index = -1
+  else
+    let self._raw = substitute(self._raw, '^\(.*\).$', '\1', '')
+  endif
+endfunction
+
 function! s:bim.convert()
   let cand = self.candidate()
   if empty(cand)

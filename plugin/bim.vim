@@ -7,12 +7,12 @@ let s:HANDLE_KEYS = []
 for lhs in split('!"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{}~', '\zs')
   call add(s:HANDLE_KEYS, {'lhs': lhs})
 endfor
-" call add(s:HANDLE_KEYS, {'lhs': '<BS>', 'char': "\<BS>"})
-" call add(s:HANDLE_KEYS, {'lhs': '<C-h>', 'char': "\<C-h>"})
+call add(s:HANDLE_KEYS, {'lhs': '<BS>', 'char': '\<BS>'})
+call add(s:HANDLE_KEYS, {'lhs': '<C-h>', 'char': '\<C-h>'})
 call add(s:HANDLE_KEYS, {'lhs': '<Space>', 'char': ' '})
 call add(s:HANDLE_KEYS, {'lhs': '<Bar>', 'char': '\|'})
-call add(s:HANDLE_KEYS, {'lhs': '<C-[>', 'char': "\<C-[>"})
-call add(s:HANDLE_KEYS, {'lhs': '<C-m>', 'char': "\<C-m>"})
+call add(s:HANDLE_KEYS, {'lhs': '<C-[>', 'char': '\<C-[>'})
+call add(s:HANDLE_KEYS, {'lhs': '<C-m>', 'char': '\<C-m>'})
 
 function! s:is_enabled()
   return &l:iminsert == 1
@@ -26,7 +26,7 @@ function! s:enable()
   let b:bim = bim#new()
   for key in s:HANDLE_KEYS
     let lhs = key['lhs']
-    let rhs = printf('<SID>proc(''%s'')', get(key, 'char', lhs))
+    let rhs = printf('<SID>proc("%s")', get(key, 'char', lhs))
     execute 'lnoremap' '<buffer>' '<expr>' lhs rhs
   endfor
 endfunction
@@ -65,6 +65,10 @@ function! s:proc(key)
   elseif a:key ==# "\<C-[>"
     let b:bim = bim#new()
     return a:key
+  elseif a:key ==# "\<C-h>" || a:key ==# "\<BS>"
+    call bim.remove_last()
+    call s:echo(bim)
+    return ''
   elseif a:key ==# ':'
     if strchars(bim.raw()) == 0
       return ':'
