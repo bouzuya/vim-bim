@@ -30,7 +30,13 @@ endfunction
 function! s:load_once(path, priority)
   if !s:loaded(a:path)
     call add(s:dicts, s:load(a:path, a:priority))
-    call sort(s:dicts, function('bim#dict#priority_comparetor'))
+    function! s:priority_comparetor(d1, d2)
+      let p1 = a:d1.priority
+      let p2 = a:d2.priority
+      return (p1 == p2 ? 0 : (p1 > p2 ? 1 : -1))
+    endfunction
+    call sort(s:dicts, function('s:priority_comparetor'))
+    delfunction s:priority_comparetor
   endif
 endfunction
 
@@ -124,12 +130,6 @@ function! bim#dict#search(keyword)
     endfor
   endfor
   return results
-endfunction
-
-function! bim#dict#priority_comparetor(d1, d2)
-  let p1 = a:d1.priority
-  let p2 = a:d2.priority
-  return (p1 == p2 ? 0 : (p1 > p2 ? 1 : -1))
 endfunction
 
 let &cpoptions = s:save_cpoptions
