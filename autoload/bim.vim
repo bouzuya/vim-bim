@@ -58,6 +58,7 @@ function! s:bim.remove_last()
     let self._okuri_index = -1
   else
     let self._raw = substitute(self._raw, '^\(.*\).$', '\1', '')
+    let self._kanji = ''
   endif
 endfunction
 
