@@ -1,3 +1,7 @@
+scriptencoding utf-8
+
+let s:save_cpoptions = &cpoptions
+set cpoptions&vim
 
 function! bim#table#raw2kana()
   let root = {'mapping': {}}
@@ -304,4 +308,7 @@ function! bim#table#hiragana2katakana()
   let table["\u309E"] = "\u30FE"
   return table
 endfunction
+
+let &cpoptions = s:save_cpoptions
+unlet! s:save_cpoptions
 

@@ -1,3 +1,8 @@
+scriptencoding utf-8
+
+let s:save_cpoptions = &cpoptions
+set cpoptions&vim
+
 function! bim#assert#are_equal(expected, actual)
   if a:expected !=# a:actual
     let format = 'expected ''%s'' but actual ''%s'''
@@ -21,4 +26,7 @@ function! bim#assert#contains(object, list)
     throw 'assert:' . message
   endif
 endfunction
+
+let &cpoptions = s:save_cpoptions
+unlet! s:save_cpoptions
 
