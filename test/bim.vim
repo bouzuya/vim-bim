@@ -161,15 +161,15 @@ function! s:test9()
 endfunction
 
 function! s:test()
-  call s:test1()
-  call s:test2()
-  call s:test3()
-  call s:test4()
-  call s:test5()
-  call s:test6()
+  " call s:test1()
+  " call s:test2()
+  " call s:test3()
+  " call s:test4()
+  " call s:test5()
+  " call s:test6()
   " call s:test7()
   " call s:test8()
-  call s:test9()
+  " call s:test9()
 endfunction
 
 call s:test()
