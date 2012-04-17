@@ -4,8 +4,8 @@ let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
 function! s:test()
-  let dir = expand('%:p:h') . '/'
-  let files = [] " ['bim.vim', 'dict.vim']
+  let dir = expand('<sfile>:p:h') . '/'
+  let files = ['bim.vim', 'dict.vim']
   for file in files
     let path = fnamemodify(dir . file, ':p')
     execute 'source' path
