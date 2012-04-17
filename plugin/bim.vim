@@ -143,7 +143,7 @@ command! BimDisable
 command! BimToggle
       \ call s:toggle()
 
-autocmd VimLeave * call bim#dict#save()
+" autocmd VimLeave * call bim#dict#save()
 
 let &cpoptions = s:save_cpoptions
 unlet! s:save_cpoptions
