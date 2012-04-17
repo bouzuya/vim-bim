@@ -17,6 +17,7 @@ if has('vim_starting')
     call s:test()
     quit
   catch
+    echomsg v:exception
     cquit
   endtry
 else
