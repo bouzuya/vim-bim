@@ -1,0 +1,2 @@
+let &runtimepath = fnamemodify('../', ':p')
+
