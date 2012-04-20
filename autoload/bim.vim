@@ -3,7 +3,8 @@ scriptencoding utf-8
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
-let s:RAW2KANA = bim#table#raw2kana()
+let s:RAW2KANA_PATH = fnamemodify(expand('<sfile>:p:h') . '/bim/table/raw.vim.data', ':p')
+let s:RAW2KANA = {}
 let s:HIRAGANA2KATAKANA = bim#table#hiragana2katakana()
 let s:bim = {}
 
@@ -21,15 +22,15 @@ function! s:bim.okuri()
 endfunction
 
 function! s:bim.yomigana()
-  return get(self._romaji2hiragana(self.yomi()), 'hiragana', '')
+  return get(self._romaji2hiragana(self.yomi(), self.is_okuri()), 'hiragana', '')
 endfunction
 
 function! s:bim.okurigana()
-  return get(self._romaji2hiragana(self.okuri()), 'hiragana', '')
+  return get(self._romaji2hiragana(self.okuri(), self.is_okuri()), 'hiragana', '')
 endfunction
 
 function! s:bim.yomirest()
-  return get(self._romaji2hiragana(self.yomi()), 'rest', '')
+  return get(self._romaji2hiragana(self.yomi(), self.is_okuri()), 'rest', '')
 endfunction
 
 function! s:bim.okurirest()
@@ -82,29 +83,19 @@ function! s:bim.start_okuri()
   let self._okuri_index = strchars(self._raw)
 endfunction
 
-function! s:bim._romaji2hiragana(romaji)
-  let root = s:RAW2KANA
-  let fixed = ''
-  let rest = ''
-  let dict = root
-  for key in split(a:romaji, '\zs')
-    " dict = {'mapping': {key: dict}, 'fixed': '', 'else': dict}
-    let rest = dict is root ? key : rest . key
-    let m = get(dict, 'mapping', get(root, 'mapping', {}))
-    let e = get(dict, 'else', root)
-    let n = get(m, key, e)
-    let fixed .= get(n, 'fixed', '')
-    let rest = !has_key(n, 'mapping') ? '' : rest
-    let dict = n
-  endfor
-  if self.is_okuri()
-    let fixed .= get(dict, 'rest', '')
-    let rest = ''
-  endif
-  return {'hiragana': fixed, 'rest': rest}
+" _romaji2hiragana({romaji}[, {proc_last}])
+function! s:bim._romaji2hiragana(romaji, ...)
+  let proc_last = get(a:000, 0, 0)
+  let dict = s:RAW2KANA.search(a:romaji, proc_last)
+  return {'hiragana': get(dict, 'kana', ''), 'rest': get(dict, 'rest', '')}
 endfunction
 
 function! bim#new()
+  if empty(s:RAW2KANA)
+    let s:RAW2KANA = bim#table#raw#get_instance()
+    call s:RAW2KANA.add_file(s:RAW2KANA_PATH)
+  endif
+
   let obj = copy(s:bim)
   let obj._okuri_index = -1
   let obj._raw = ''
