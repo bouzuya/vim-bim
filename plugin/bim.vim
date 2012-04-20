@@ -20,9 +20,6 @@ endfunction
 
 function! s:enable()
   setlocal iminsert=1
-
-  call s:load_dict()
-
   let b:bim = bim#new()
   for key in s:HANDLE_KEYS
     let lhs = key['lhs']
@@ -120,15 +117,6 @@ function! s:echo(bim)
   finally
     let &more = save_more
   endtry
-endfunction
-
-function! s:load_dict()
-  redraw | echon 'load dict ...'
-  let dict = bim#option#get_path('dict')
-  call bim#dict#load(dict)
-  let user_dict = bim#option#get_path('user_dict')
-  call bim#dict#load(user_dict, 0)
-  redraw | echon 'load dict ... finished.'
 endfunction
 
 command! BimIsEnabled

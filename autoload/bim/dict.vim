@@ -18,13 +18,13 @@ endfunction
 function! s:load(path, priority)
   let path = expand(a:path)
   let lines = filereadable(path) ? readfile(path) : []
-  call filter(lines, 'v:val !~# ''^\s*;''')
-  let entries = {}
-  for line in lines
-    let entry = bim#dict#entry#parse(line)
-    let entries[entry.keyword()] = entry
+  " call filter(lines, 'v:val !~# ''^;''')
+  let e = {}
+  let p =  '^\S\+'
+  for l in lines
+    let e[matchstr(l, p)] = l
   endfor
-  return {'name': path, 'priority': a:priority, 'entries': entries}
+  return {'name': path, 'priority': a:priority, 'entries': e}
 endfunction
 
 function! s:load_once(path, priority)
@@ -94,13 +94,14 @@ endfunction
 function! bim#dict#add_word(keyword, word)
   let dict = s:user_dict()
   if has_key(dict.entries, a:keyword)
-    let entry = dict.entries[a:keyword]
+    let entry_string = dict.entries[a:keyword]
+    let entry = bim#dict#entry#parse(entry_string)
   else
     let entry = bim#dict#entry#new(a:keyword)
-    let dict.entries[a:keyword] = entry
   endif
   call entry.remove_word(a:word)
   call entry.insert_word(a:word)
+  let dict.entries[a:keyword] = entry.to_string()
 endfunction
 
 function! bim#dict#add_words(keyword, words)
@@ -122,7 +123,8 @@ function! bim#dict#search(keyword)
       continue
     endif
 
-    let entry = dict.entries[a:keyword]
+    let entry_string = dict.entries[a:keyword]
+    let entry = bim#dict#entry#parse(entry_string)
     for word in entry.words()
       if index(results, word) == -1
         call add(results, word)
@@ -130,6 +132,13 @@ function! bim#dict#search(keyword)
     endfor
   endfor
   return results
+endfunction
+
+function! bim#dict#load_all()
+  let dict = bim#option#get_path('dict')
+  call bim#dict#load(dict)
+  let user_dict = bim#option#get_path('user_dict')
+  call bim#dict#load(user_dict, 0)
 endfunction
 
 let &cpoptions = s:save_cpoptions
