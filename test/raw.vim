@@ -36,13 +36,23 @@ function! s:test3()
   let result = raw.search('kan', 1)
   call bim#assert#are_equal("\u304B\u3093", get(result, 'kana', ''))
   call bim#assert#are_equal('', get(result, 'rest', ''))
-  call bim#assert#are_equal(1, 2)
+endfunction
+
+function! s:test4()
+  let raw = bim#table#raw#get_instance()
+  call raw.clear()
+  call raw.add('a', '"\u3042"')
+  call raw.add('ka', '"\u304B"')
+  let result = raw.search('aa')
+  call bim#assert#are_equal("\u3042\u3042", get(result, 'kana', ''))
+  call bim#assert#are_equal("", get(result, 'rest', ''))
 endfunction
 
 function! s:test()
   call s:test1()
   call s:test2()
   call s:test3()
+  call s:test4()
 endfunction
 
 call s:test()

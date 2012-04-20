@@ -43,6 +43,16 @@ endfunction
 
 " raw2kana({raw}[, {proc_last}])
 function! s:raw.search(raw, ...)
+  function! s:eval(expr)
+    let val = eval(a:expr)
+    if type(val) == type([])
+      return val
+    elseif type(val) == type('')
+      return [val, '']
+    else
+      return ['', '']
+    endif
+  endfunction
   let proc_last = get(a:000, 0, 0)
   let root = self._table
   let prev = root
@@ -55,7 +65,6 @@ function! s:raw.search(raw, ...)
   let list = matchlist(a:raw, '^\(.\)\(.*\)$')
   while !empty(list)
     let [c, s; _] = list[1:]
-
     let pm = get(prev, 'mapping', {})
     let pe = get(prev, 'expr', '''''')
     let curr = get(pm, c, {})
@@ -63,28 +72,18 @@ function! s:raw.search(raw, ...)
     let ce = get(curr, 'expr', '''''')
 
     if empty(curr)
-      let kana .= eval(pe)
-      let rest = ''
-      let prev = root
-      continue
-    endif
-
-    if empty(cm)
-      let kana .= eval(ce)
-      let rest = ''
-      let prev = root
+      let d = {'expr': pe, 'continue': 1}
+    elseif empty(cm)
+      let d = {'expr': ce}
     else
-      let rest .= c
-      let prev = curr
+      let d = {'rest': c, 'prev': curr}
     endif
-
-    if !cont && pc == c
-      let cont = 1
-      let s = c . s
-    else
-      let cont = 0
-    endif
-    let pc = c
+    let expr = get(d, 'expr', '''''')
+    let val = s:eval(expr)
+    let kana .= get(val, 0, '')
+    let rest .= get(d, 'rest', '')
+    let prev = get(d, 'prev', root)
+    let s = (get(d, 'continue', 0) ? c : '') . get(val, 1, '') . s
 
     let list = matchlist(s, '^\(.\)\(.*\)$')
   endwhile
