@@ -76,12 +76,12 @@ function! s:raw.search(raw, ...)
     elseif empty(cm)
       let d = {'expr': ce}
     else
-      let d = {'rest': c, 'prev': curr}
+      let d = {'rest': rest . c, 'prev': curr}
     endif
     let expr = get(d, 'expr', '''''')
     let val = s:eval(expr)
     let kana .= get(val, 0, '')
-    let rest .= get(d, 'rest', '')
+    let rest = get(d, 'rest', '')
     let prev = get(d, 'prev', root)
     let s = (get(d, 'continue', 0) ? c : '') . get(val, 1, '') . s
 
