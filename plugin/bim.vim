@@ -76,7 +76,6 @@ function! s:proc(key)
     call s:echo(bim)
     return ''
   elseif a:key ==# ';' || a:key ==# "\<C-m>"
-    let b = bim.fixed()
     let fixed = bim.fixed()
     call bim.fix()
     if fixed ==# bim.fixed()
@@ -91,9 +90,15 @@ function! s:proc(key)
     let b:bim = bim#new()
     return result
   elseif a:key ==# 'q'
-    let h = bim.yomigana()
-    let b:bim = bim#new()
-    return bim#hiragana2katakana(h)
+    let fixed = bim.fixed()
+    call bim.fix_katakana()
+    if fixed ==# bim.fixed()
+      let b:bim = bim#new()
+    else
+      let fixed = ''
+    endif
+    call s:echo(bim)
+    return fixed
   else
     call bim.input(a:key)
     call s:echo(bim)
