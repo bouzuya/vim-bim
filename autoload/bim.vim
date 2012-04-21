@@ -41,6 +41,10 @@ function! s:bim.kanji()
   return self._kanji
 endfunction
 
+function! s:bim.fixed()
+  return self._fixed
+endfunction
+
 function! s:bim.is_okuri()
   return self._okuri_index != -1
 endfunction
@@ -83,6 +87,20 @@ function! s:bim.start_okuri()
   let self._okuri_index = strchars(self._raw)
 endfunction
 
+function! s:bim.fix()
+  let result = ''
+  if strchars(self.kanji()) == 0
+    let result = self.yomigana() . self.okurigana()
+  else
+    call bim#dict#add_word(self.yomigana() . self.okuri()[0], self.kanji())
+    let result = self.kanji() . self.okurigana()
+  endif
+  let self._fixed .= result
+  let self._okuri_index = -1
+  let self._raw = ''
+  let self._kanji = ''
+endfunction
+
 " _romaji2hiragana({romaji}[, {proc_last}])
 function! s:bim._romaji2hiragana(romaji, ...)
   let proc_last = get(a:000, 0, 0)
@@ -100,6 +118,7 @@ function! bim#new()
   let obj._okuri_index = -1
   let obj._raw = ''
   let obj._kanji = ''
+  let obj._fixed = ''
   return obj
 endfunction
 

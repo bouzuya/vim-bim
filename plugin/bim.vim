@@ -76,14 +76,16 @@ function! s:proc(key)
     call s:echo(bim)
     return ''
   elseif a:key ==# ';' || a:key ==# "\<C-m>"
-    let result = bim.kanji()
-    if strchars(result) == 0
-      let result = bim.yomigana()
+    let b = bim.fixed()
+    let fixed = bim.fixed()
+    call bim.fix()
+    if fixed ==# bim.fixed()
+      let b:bim = bim#new()
     else
-      call bim#dict#add_word(bim.yomigana() . bim.okuri()[0], result)
+      let fixed = ''
     endif
-    let b:bim = bim#new()
-    return result . bim.okurigana()
+    call s:echo(bim)
+    return fixed
   elseif a:key ==# 'l'
     let result = bim.raw()
     let b:bim = bim#new()
@@ -109,9 +111,9 @@ function! s:echo(bim)
     set nomore
     let bim = a:bim
     let is_conv = strchars(bim.kanji()) > 0
-    let i = printf('[%s]%s', bim.yomi(), bim.okuri())
     let o = printf('[%s]%s', (is_conv ? bim.kanji() : bim.yomigana()), bim.okurigana())
-    let l1 = printf('%s|%s', o, i)
+    let i = printf('[%s]%s', bim.yomi(), bim.okuri())
+    let l1 = printf('%s%s|%s', bim.fixed(), o, i)
     let l2 = string(bim.candidate()[:7])
     redraw | echon l1 . "\n" . l2
   finally
