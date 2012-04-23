@@ -119,11 +119,29 @@ function! s:echo(bim)
     let o = printf('[%s]%s', (is_conv ? bim.kanji() : bim.yomigana()), bim.okurigana())
     let i = printf('[%s]%s', bim.yomi(), bim.okuri())
     let l1 = printf('%s%s|%s', bim.fixed(), o, i)
-    let l2 = string(bim.candidate()[:7])
+    let cand = bim.candidate()
+    let n = 7
+    let pages = s:paging(cand, n)
+    let k = bim.kanji()
+    let idx = is_conv ? index(cand, bim.kanji()) : -1
+    let l2 = printf('(%d/%d)', (idx / n + 1), len(pages))
+    let l2 .= '[' . join(map(get(pages, idx / n, []), 'printf((v:val ==# k ? ''*%s*'' : '' %s ''), v:val)'), '') . ']'
     redraw | echon l1 . "\n" . l2
   finally
     let &more = save_more
   endtry
+endfunction
+
+function! s:paging(list, n)
+  if empty(a:list)
+    return [[]]
+  endif
+
+  let pages = []
+  for i in range(0, len(a:list) - 1, a:n)
+    call add(pages, a:list[i : (i + a:n - 1)])
+  endfor
+  return pages
 endfunction
 
 command! BimIsEnabled
