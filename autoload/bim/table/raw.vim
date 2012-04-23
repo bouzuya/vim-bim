@@ -62,7 +62,8 @@ function! s:raw.search(raw, ...)
   let ce = ''''''
   let kana = ''
   let rest = ''
-  let list = matchlist(a:raw, '^\(.\)\(.*\)$')
+  let s = a:raw
+  let list = matchlist(s, '^\(.\)\(.*\)$')
   while !empty(list)
     let [c, s; _] = list[1:]
     let pm = get(prev, 'mapping', {})
@@ -72,7 +73,7 @@ function! s:raw.search(raw, ...)
     let ce = get(curr, 'expr', '''''')
 
     if empty(curr)
-      let d = {'expr': pe, 'continue': 1}
+      let d = {'expr': pe, 'continue': prev isnot root}
     elseif empty(cm)
       let d = {'expr': ce}
     else
