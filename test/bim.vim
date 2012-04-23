@@ -172,6 +172,13 @@ function! s:test10()
   call bim#assert#are_equal('', b.okurirest())
 endfunction
 
+function! s:test11()
+  let b = bim#new()
+  call bim#assert#are_equal('', b.fixed())
+  call b.fix()
+  call bim#assert#are_equal('', b.fixed())
+endfunction
+
 function! s:test()
   call s:test1()
   call s:test2()
@@ -183,6 +190,7 @@ function! s:test()
   call s:test8()
   call s:test9()
   call s:test10()
+  call s:test11()
 endfunction
 
 call s:test()
