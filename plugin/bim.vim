@@ -24,7 +24,7 @@ function! s:enable()
   for key in s:HANDLE_KEYS
     let lhs = key['lhs']
     let rhs = printf('<SID>proc("%s")', get(key, 'char', lhs))
-    execute 'lnoremap' '<buffer>' '<expr>' lhs rhs
+    execute 'lnoremap' '<expr>' lhs rhs
   endfor
 endfunction
 
