@@ -116,9 +116,9 @@ function! s:echo(bim)
     set nomore
     let bim = a:bim
     let is_conv = strchars(bim.kanji()) > 0
-    let o = printf('[%s]%s', (is_conv ? bim.kanji() : bim.yomigana()), bim.okurigana())
-    let i = printf('[%s]%s', bim.yomi(), bim.okuri())
-    let l1 = printf('%s%s|%s', bim.fixed(), o, i)
+    let conv = is_conv ? bim.kanji() : bim.yomigana()
+    let fmt = bim.is_okuri() ? '%s[%s]%s| [%s]%s|' : '%s[%s|%s] [%s|]%s'
+    let l1 = printf(fmt, bim.fixed(), conv, bim.okurigana(), bim.yomi(), bim.okuri())
     let cand = bim.candidate()
     let n = 7
     let pages = s:paging(cand, n)
