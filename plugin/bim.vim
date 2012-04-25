@@ -76,35 +76,44 @@ function! s:proc(key)
     call s:echo(bim)
     return ''
   elseif a:key ==# ';' || a:key ==# "\<C-m>"
-    let fixed = bim.fixed()
+    let before = bim.fixed()
     call bim.fix()
-    if fixed ==# bim.fixed()
-      let b:bim = bim#new()
+    let after = bim.fixed()
+    if strchars(after) == 0
+      return a:key
+    elseif before !=# after
+      call s:echo(bim)
+      return ''
     else
-      let fixed = ''
+      let b:bim = bim#new()
+      return after
     endif
-    call s:echo(bim)
-    return fixed
   elseif a:key ==# 'l'
-    let fixed = bim.fixed()
+    let before = bim.fixed()
     call bim.fix_raw()
-    if fixed ==# bim.fixed()
-      let b:bim = bim#new()
+    let after = bim.fixed()
+    if strchars(after) == 0
+      return a:key
+    elseif before !=# after
+      call s:echo(bim)
+      return ''
     else
-      let fixed = ''
+      let b:bim = bim#new()
+      return after
     endif
-    call s:echo(bim)
-    return fixed
   elseif a:key ==# 'q'
-    let fixed = bim.fixed()
+    let before = bim.fixed()
     call bim.fix_katakana()
-    if fixed ==# bim.fixed()
-      let b:bim = bim#new()
+    let after = bim.fixed()
+    if strchars(after) == 0
+      return a:key
+    elseif before !=# after
+      call s:echo(bim)
+      return ''
     else
-      let fixed = ''
+      let b:bim = bim#new()
+      return after
     endif
-    call s:echo(bim)
-    return fixed
   else
     call bim.input(a:key)
     call s:echo(bim)
