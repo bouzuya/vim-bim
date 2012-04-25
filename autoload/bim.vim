@@ -108,6 +108,13 @@ function! s:bim.fix_katakana()
   let self._kanji = ''
 endfunction
 
+function! s:bim.fix_raw()
+  let self._fixed .= self.raw()
+  let self._okuri_index = -1
+  let self._raw = ''
+  let self._kanji = ''
+endfunction
+
 " _romaji2hiragana({romaji}[, {proc_last}])
 function! s:bim._romaji2hiragana(romaji, ...)
   let proc_last = get(a:000, 0, 0)

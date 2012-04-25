@@ -86,9 +86,15 @@ function! s:proc(key)
     call s:echo(bim)
     return fixed
   elseif a:key ==# 'l'
-    let result = bim.raw()
-    let b:bim = bim#new()
-    return result
+    let fixed = bim.fixed()
+    call bim.fix_raw()
+    if fixed ==# bim.fixed()
+      let b:bim = bim#new()
+    else
+      let fixed = ''
+    endif
+    call s:echo(bim)
+    return fixed
   elseif a:key ==# 'q'
     let fixed = bim.fixed()
     call bim.fix_katakana()
