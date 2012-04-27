@@ -50,13 +50,7 @@ function! s:proc(key)
     endif
     call bim.convert()
     let cand = bim.candidate()
-    if len(cand) == 0
-      let okuri = bim.is_okuri() ? ':' . bim.okuri() : ''
-      echomsg printf('%s is not found', bim.yomigana() . okuri)
-      return ''
-    else
-      call s:echo(bim)
-    endif
+    call s:echo(bim)
   elseif a:key ==# "\<C-[>"
     let b:bim = bim#new()
     return a:key
