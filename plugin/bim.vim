@@ -55,7 +55,10 @@ function! s:proc(key)
     let b:bim = bim#new()
     return a:key
   elseif a:key ==# "\<C-h>" || a:key ==# "\<BS>"
-    if strchars(bim.raw()) > 0
+    if strchars(bim.fixed()) > 0
+      call s:echo(bim)
+      return ''
+    elseif strchars(bim.raw()) > 0
       call bim.remove_last()
       call s:echo(bim)
       return ''
