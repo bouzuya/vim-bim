@@ -21,6 +21,7 @@ endfunction
 function! s:enable()
   setlocal iminsert=1
   let b:bim = bim#new()
+  call bim#dict#load_all()
   for key in s:HANDLE_KEYS
     let lhs = key['lhs']
     let rhs = printf('<SID>proc("%s")', get(key, 'char', lhs))
