@@ -153,9 +153,6 @@ function! s:paging(list, n)
   return pages
 endfunction
 
-command! BimIsEnabled
-      \ call s:is_enabled()
-
 command! BimEnable
       \ call s:enable()
 
