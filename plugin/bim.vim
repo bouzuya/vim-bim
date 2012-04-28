@@ -66,18 +66,17 @@ function! s:proc(key)
       return a:key
     endif
   elseif a:key ==# ':'
-    if strchars(bim.raw()) == 0
-      return ':'
+    if strchars(bim.raw()) != 0
+      call bim.start_okuri()
+      call s:echo(bim)
     endif
-    call bim.start_okuri()
-    call s:echo(bim)
     return ''
   elseif a:key ==# ';' || a:key ==# "\<C-m>"
     let before = bim.fixed()
     call bim.fix()
     let after = bim.fixed()
     if strchars(after) == 0
-      return a:key
+      return ''
     elseif before !=# after
       call s:echo(bim)
       return ''
