@@ -162,6 +162,22 @@ function! s:paging(list, n)
   return pages
 endfunction
 
+function! s:add_word()
+  let yomigana = input('読み仮名 ?')
+  if strchars(yomigana) == 0
+    return
+  endif
+  let okuri = input('送り仮名の先頭一文字(ローマ字) ?')
+  if strchars(okuri) > 0 && okuri !~# '^[a-z]$'
+    return
+  endif
+  let kanji = input('漢字 ?')
+  if strchars(kanji) == 0
+    return
+  endif
+  call bim#dict#add_word(yomigana . okuri, kanji)
+endfunction
+
 command! BimEnable
       \ call s:enable()
 
@@ -170,6 +186,9 @@ command! BimDisable
 
 command! BimToggle
       \ call s:toggle()
+
+command! BimAddWord
+      \ call s:add_word()
 
 " autocmd VimLeave * call bim#dict#save()
 
