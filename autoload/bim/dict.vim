@@ -104,18 +104,6 @@ function! bim#dict#add_word(keyword, word)
   let dict.entries[a:keyword] = entry.to_string()
 endfunction
 
-function! bim#dict#add_words(keyword, words)
-  throw 'bim:'
-endfunction
-
-function! bim#dict#add_entry(entry)
-  throw 'bim:'
-endfunction
-
-function! bim#dict#add_entries(entries)
-  throw 'bim:'
-endfunction
-
 function! bim#dict#search(keyword)
   let results = []
   for dict in s:dicts
