@@ -3,6 +3,10 @@ scriptencoding utf-8
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
+function! bim#assert#fail()
+  throw 'assert:'
+endfunction
+
 function! bim#assert#are_equal(expected, actual)
   if a:expected !=# a:actual
     let format = 'expected ''%s'' but actual ''%s'''
