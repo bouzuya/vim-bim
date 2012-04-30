@@ -50,7 +50,6 @@ function! s:proc(key)
       return ' '
     endif
     call bim.convert()
-    let cand = bim.candidate()
     call s:echo(bim)
   elseif a:key ==# "\<C-[>"
     let b:bim = bim#new()
