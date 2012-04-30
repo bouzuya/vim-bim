@@ -121,6 +121,31 @@ l						*bim-usage-key-l*
 <
 
 ==============================================================================
+インストール					*bim-installation*
+
+インストールは任意のフォルダに配置して'runtimepath'に追加する。
+
+>
+	git clone git://github.com/bouzuya/vim-bim.git ~/.vim/bundle/vim-bim
+	cat >>~/.vimrc <<"EOT"
+	set runtimepath+=~/.vim/bundle/vim-bim/
+	EOT
+<
+
+かな漢字変換のためにSKK辞書(annotaionなし、文字コードutf-8)が必要である。次の
+コマンドでダウンロード、変換が可能である。
+
+>
+	wget http://openlab.ring.gr.jp/skk/dic/SKK-JISYO.L.unannotated.gz
+	gunzip SKK-JISYO.L.unannotated.gz
+	iconv -f euc-jp -t utf-8 SKK-JISYO.L.unannotated \
+	    > SKK-JISYO.L.unannotated.utf8
+<
+
+|bim-options.dict_path|オプションでSKK辞書へのパスを指定できる。bim起動時に読み
+込まれる。詳細は|bim-examples|を参照。
+
+==============================================================================
 インターフェース				*bim-interface*
 
 ------------------------------------------------------------------------------
@@ -150,11 +175,12 @@ g:bim.user_dict_path				*bim-options.user_dict_path*
 設定例						*bim-examples*
 
 >
-    nnoremap <silent> <C-j> <C-\><C-o>:BimToggle<C-m>
-    let g:bim = {
-        \ 'dict_path': '~/SKK-JISYO.L.utf8',
-        \ 'user_dict_path': '~/.vim-bim-dict'
-        \ }
+	set runtimepath+=~/.vim/bundle/vim-bim/
+	nnoremap <silent> <C-j> <C-\><C-o>:BimToggle<C-m>
+	let g:bim = {
+	    \ 'dict_path': '~/SKK-JISYO.L.unannotated.utf8',
+	    \ 'user_dict_path': '~/.vim-bim-dict'
+	    \ }
 <
 
 ==============================================================================
