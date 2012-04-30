@@ -8,6 +8,24 @@ let s:RAW2KANA = {}
 let s:HIRAGANA2KATAKANA = bim#table#hiragana2katakana()
 let s:bim = {}
 
+function! bim#new()
+  if empty(s:RAW2KANA)
+    let s:RAW2KANA = bim#table#raw#get_instance()
+    call s:RAW2KANA.add_file(s:RAW2KANA_PATH)
+  endif
+  let obj = copy(s:bim)
+  call obj._init()
+  return obj
+endfunction
+
+function! bim#hiragana2katakana(hiragana)
+  let katakana = ''
+  for h in split(a:hiragana, '\zs')
+    let katakana .= get(s:HIRAGANA2KATAKANA, h, '')
+  endfor
+  return katakana
+endfunction
+
 function! s:bim.raw()
   return self._raw
 endfunction
@@ -95,21 +113,19 @@ function! s:bim.fix()
     call bim#dict#add_word(self.yomigana() . self.okuri()[0], self.kanji())
     let result = self.kanji() . self.okurigana()
   endif
-  let self._fixed .= result
-  let self._okuri_index = -1
-  let self._raw = ''
-  let self._kanji = ''
+  call self._fix(result)
 endfunction
 
 function! s:bim.fix_katakana()
-  let self._fixed .= bim#hiragana2katakana(self.yomigana()) . self.okurigana()
-  let self._okuri_index = -1
-  let self._raw = ''
-  let self._kanji = ''
+  call self._fix(bim#hiragana2katakana(self.yomigana()) . self.okurigana())
 endfunction
 
 function! s:bim.fix_raw()
-  let self._fixed .= self.raw()
+  call self._fix(self.raw())
+endfunction
+
+function! s:bim._fix(s)
+  let self._fixed .= a:s
   let self._okuri_index = -1
   let self._raw = ''
   let self._kanji = ''
@@ -119,29 +135,19 @@ endfunction
 function! s:bim._romaji2hiragana(romaji, ...)
   let proc_last = get(a:000, 0, 0)
   let dict = s:RAW2KANA.search(a:romaji, proc_last)
-  return {'hiragana': get(dict, 'kana', ''), 'rest': get(dict, 'rest', '')}
+  return {
+        \ 'hiragana': get(dict, 'kana', ''),
+        \ 'rest': get(dict, 'rest', '')
+        \ }
 endfunction
 
-function! bim#new()
-  if empty(s:RAW2KANA)
-    let s:RAW2KANA = bim#table#raw#get_instance()
-    call s:RAW2KANA.add_file(s:RAW2KANA_PATH)
-  endif
-
-  let obj = copy(s:bim)
-  let obj._okuri_index = -1
-  let obj._raw = ''
-  let obj._kanji = ''
-  let obj._fixed = ''
-  return obj
-endfunction
-
-function! bim#hiragana2katakana(hiragana)
-  let katakana = ''
-  for h in split(a:hiragana, '\zs')
-    let katakana .= get(s:HIRAGANA2KATAKANA, h, '')
-  endfor
-  return katakana
+function! s:bim._init()
+  call extend(self, {
+        \ '_okuri_index': -1,
+        \ '_raw': '',
+        \ '_kanji': '',
+        \ '_fixed': ''
+        \ })
 endfunction
 
 let &cpoptions = s:save_cpoptions
