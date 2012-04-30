@@ -123,10 +123,6 @@ function! s:proc(key)
   return ''
 endfunction
 
-function! s:proc2(arg)
-  return {'result': ''}
-endfunction
-
 function! s:echo(bim)
   let save_more = &more
   try
@@ -137,28 +133,15 @@ function! s:echo(bim)
     let fmt = bim.is_okuri() ? '%s[%s]%s| [%s]%s|' : '%s[%s|%s] [%s|]%s'
     let l1 = printf(fmt, bim.fixed(), conv, bim.okurigana(), bim.yomi(), bim.okuri())
     let cand = bim.candidate()
-    let n = 7
-    let pages = s:paging(cand, n)
     let k = bim.kanji()
-    let idx = is_conv ? index(cand, bim.kanji()) : -1
-    let l2 = printf('(%d/%d)', (idx / n + 1), len(pages))
-    let l2 .= '[' . join(map(get(pages, idx / n, []), 'printf((v:val ==# k ? ''*%s*'' : '' %s ''), v:val)'), '') . ']'
+    let idx = is_conv ? index(cand, k) : -1
+    let pager = bim#pager#new(cand, 7, idx)
+    let l2 = printf('(%d/%d)', pager.pageidx() + 1, pager.pagenum())
+    let l2 .= '[' . join(map(pager.page(), 'printf((v:val ==# k ? ''*%s*'' : '' %s ''), v:val)'), '') . ']'
     redraw | echon l1 . "\n" . l2
   finally
     let &more = save_more
   endtry
-endfunction
-
-function! s:paging(list, n)
-  if empty(a:list)
-    return [[]]
-  endif
-
-  let pages = []
-  for i in range(0, len(a:list) - 1, a:n)
-    call add(pages, a:list[i : (i + a:n - 1)])
-  endfor
-  return pages
 endfunction
 
 function! s:add_word()
