@@ -101,7 +101,9 @@ endfunction
 
 function! bim#handler#else(bim, key)
   let b = a:bim
-  call b.input(a:key)
+  if a:key !~# '^[[:cntrl:]]$'
+    call b.input(a:key)
+  endif
   call s:echo(b)
   return ''
 endfunction
