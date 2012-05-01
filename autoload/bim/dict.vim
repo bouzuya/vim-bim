@@ -82,7 +82,8 @@ function! bim#dict#save()
   if strchars(dict.name) > 0
     let entries = []
     for keyword in keys(dict.entries)
-      let entry = dict.entries[keyword]
+      let entry_string = dict.entries[keyword]
+      let entry = bim#dict#entry#parse(entry_string)
       call add(entries, entry.to_string())
     endfor
     if !empty(entries)
