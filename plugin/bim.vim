@@ -14,6 +14,18 @@ call add(s:HANDLE_KEYS, {'lhs': '<Bar>', 'char': '\|'})
 call add(s:HANDLE_KEYS, {'lhs': '<C-[>', 'char': '\<C-[>'})
 call add(s:HANDLE_KEYS, {'lhs': '<C-m>', 'char': '\<C-m>'})
 
+let s:HANDLERS = {
+      \ ' ': function('bim#handler#space'),
+      \ "\<C-[>": function('bim#handler#escape'),
+      \ "\<C-h>": function('bim#handler#backspace'),
+      \ "\<BS>": function('bim#handler#backspace'),
+      \ ':': function('bim#handler#colon'),
+      \ ';': function('bim#handler#semicolon'),
+      \ "\<C-m>": function('bim#handler#semicolon'),
+      \ 'l': function('bim#handler#l'),
+      \ 'q': function('bim#handler#q')
+      \ }
+
 function! s:is_enabled()
   return &l:iminsert == 1
 endfunction
@@ -45,103 +57,12 @@ endfunction
 
 function! s:proc(key)
   let bim = exists('b:bim') ? b:bim : bim#new()
-  if a:key == ' '
-    if strchars(bim.raw()) == 0
-      return ' '
+  for k in keys(s:HANDLERS)
+    if k ==# a:key
+      return s:HANDLERS[k](bim, a:key)
     endif
-    call bim.convert()
-    call s:echo(bim)
-  elseif a:key ==# "\<C-[>"
-    let b:bim = bim#new()
-    return a:key
-  elseif a:key ==# "\<C-h>" || a:key ==# "\<BS>"
-    if strchars(bim.fixed()) > 0
-      call s:echo(bim)
-      return ''
-    elseif strchars(bim.raw()) > 0
-      call bim.remove_last()
-      call s:echo(bim)
-      return ''
-    else
-      return a:key
-    endif
-  elseif a:key ==# ':'
-    if strchars(bim.fixed()) == 0 && strchars(bim.raw()) == 0
-      return a:key
-    endif
-    if strchars(bim.raw()) != 0 && !bim.is_okuri()
-      call bim.start_okuri()
-    endif
-    call s:echo(bim)
-    return ''
-  elseif a:key ==# ';' || a:key ==# "\<C-m>"
-    let before = bim.fixed()
-    if strchars(before) == 0 && strchars(bim.raw()) == 0
-      return a:key
-    endif
-    call bim.fix()
-    let after = bim.fixed()
-    if strchars(after) == 0
-      return ''
-    elseif before !=# after
-      call s:echo(bim)
-      return ''
-    else
-      let b:bim = bim#new()
-      return after
-    endif
-  elseif a:key ==# 'l'
-    let before = bim.fixed()
-    call bim.fix_raw()
-    let after = bim.fixed()
-    if strchars(after) == 0
-      return a:key
-    elseif before !=# after
-      call s:echo(bim)
-      return ''
-    else
-      let b:bim = bim#new()
-      return after
-    endif
-  elseif a:key ==# 'q'
-    let before = bim.fixed()
-    call bim.fix_katakana()
-    let after = bim.fixed()
-    if strchars(after) == 0
-      return a:key
-    elseif before !=# after
-      call s:echo(bim)
-      return ''
-    else
-      let b:bim = bim#new()
-      return after
-    endif
-  else
-    call bim.input(a:key)
-    call s:echo(bim)
-  endif
-  return ''
-endfunction
-
-function! s:echo(bim)
-  let save_more = &more
-  try
-    set nomore
-    let bim = a:bim
-    let is_conv = strchars(bim.kanji()) > 0
-    let conv = is_conv ? bim.kanji() : bim.yomigana()
-    let fmt = bim.is_okuri() ? '%s[%s]%s| [%s]%s|' : '%s[%s|%s] [%s|]%s'
-    let l1 = printf(fmt, bim.fixed(), conv, bim.okurigana(), bim.yomi(), bim.okuri())
-    let cand = bim.candidate()
-    let k = bim.kanji()
-    let idx = is_conv ? index(cand, k) : -1
-    let pager = bim#pager#new(cand, 7, idx)
-    let l2 = printf('(%d/%d)', pager.pageidx() + 1, pager.pagenum())
-    let l2 .= '[' . join(map(pager.page(), 'printf((v:val ==# k ? ''*%s*'' : '' %s ''), v:val)'), '') . ']'
-    redraw | echon l1 . "\n" . l2
-  finally
-    let &more = save_more
-  endtry
+  endfor
+  return bim#handler#else(bim, a:key)
 endfunction
 
 function! s:add_word()
