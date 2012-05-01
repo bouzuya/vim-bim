@@ -32,7 +32,7 @@ endfunction
 
 function! s:enable()
   setlocal iminsert=1
-  let b:bim = bim#new()
+  let b:bim = bim#engine#new()
   call bim#dict#load_all()
   for key in s:HANDLE_KEYS
     let lhs = key['lhs']
@@ -56,7 +56,7 @@ function! s:toggle()
 endfunction
 
 function! s:proc(key)
-  let bim = exists('b:bim') ? b:bim : bim#new()
+  let bim = exists('b:bim') ? b:bim : bim#engine#new()
   for k in keys(s:HANDLERS)
     if k ==# a:key
       return s:HANDLERS[k](bim, a:key)

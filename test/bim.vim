@@ -4,7 +4,7 @@ let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
 function! s:test1()
-  let b = bim#new()
+  let b = bim#engine#new()
   call b.input('k')
   call bim#assert#are_equal('k', b.raw())
   call bim#assert#are_equal('k', b.yomi())
@@ -38,7 +38,7 @@ function! s:test1()
 endfunction
 
 function! s:test2()
-  let b = bim#new()
+  let b = bim#engine#new()
   call b.input('w')
   call b.input('a')
   call b.input('s')
@@ -56,7 +56,7 @@ function! s:test2()
 endfunction
 
 function! s:test3()
-  let b = bim#new()
+  let b = bim#engine#new()
   call b.input('a')
   call b.input('i')
   " for c in b.candidate()
@@ -68,7 +68,7 @@ function! s:test3()
 endfunction
 
 function! s:test4()
-  let b = bim#new()
+  let b = bim#engine#new()
   call b.input('k')
   call b.input('a')
   call b.input('n')
@@ -89,7 +89,7 @@ function! s:test4()
 endfunction
 
 function! s:test5()
-  let b = bim#new()
+  let b = bim#engine#new()
   call b.input('k')
   call b.input('a')
   call bim#assert#are_equal('ka', b.raw())
@@ -102,7 +102,7 @@ function! s:test5()
 endfunction
 
 function! s:test6()
-  let b = bim#new()
+  let b = bim#engine#new()
   call b.input('k')
   call b.input('a')
   call b.input('n')
@@ -116,7 +116,7 @@ function! s:test6()
 endfunction
 
 function! s:test7()
-  let b = bim#new()
+  let b = bim#engine#new()
   call b.input('k')
   call b.input('a')
   call b.input('n')
@@ -131,7 +131,7 @@ function! s:test7()
 endfunction
 
 function! s:test8()
-  let b = bim#new()
+  let b = bim#engine#new()
   call b.input('k')
   call b.input('a')
   call b.input('n')
@@ -147,7 +147,7 @@ function! s:test8()
 endfunction
 
 function! s:test9()
-  let b = bim#new()
+  let b = bim#engine#new()
   call b.input('i')
   call b.start_okuri()
   call b.input('u')
@@ -161,7 +161,7 @@ function! s:test9()
 endfunction
 
 function! s:test10()
-  let b = bim#new()
+  let b = bim#engine#new()
   call b.input('k')
   call bim#assert#are_equal('k', b.raw())
   call bim#assert#are_equal('k', b.yomi())
@@ -173,7 +173,7 @@ function! s:test10()
 endfunction
 
 function! s:test11()
-  let b = bim#new()
+  let b = bim#engine#new()
   call bim#assert#are_equal('', b.fixed())
   call b.fix()
   call bim#assert#are_equal('', b.fixed())

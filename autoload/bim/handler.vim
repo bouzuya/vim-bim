@@ -14,7 +14,7 @@ function! bim#handler#space(bim, key)
 endfunction
 
 function! bim#handler#escape(bim, key)
-  call s:set_bim(bim#new())
+  call s:set_bim(bim#engine#new())
   return a:key
 endfunction
 
@@ -59,7 +59,7 @@ function! bim#handler#semicolon(bim, key)
     call s:echo(b)
     return ''
   else
-    call s:set_bim(bim#new())
+    call s:set_bim(bim#engine#new())
     return after
   endif
   return ''
@@ -76,7 +76,7 @@ function! bim#handler#l(bim, key)
     call s:echo(b)
     return ''
   else
-    call s:set_bim(bim#new())
+    call s:set_bim(bim#engine#new())
     return after
   endif
   return ''
@@ -93,7 +93,7 @@ function! bim#handler#q(bim, key)
     call s:echo(b)
     return ''
   else
-    call s:set_bim(bim#new())
+    call s:set_bim(bim#engine#new())
     return after
   endif
   return ''
