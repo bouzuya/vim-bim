@@ -31,7 +31,7 @@ command! BimToggle
 command! BimAddWord
       \ call s:add_word()
 
-" autocmd VimLeave * call bim#dict#save()
+autocmd VimLeave * call bim#dict#save()
 
 let &cpoptions = s:save_cpoptions
 unlet! s:save_cpoptions
