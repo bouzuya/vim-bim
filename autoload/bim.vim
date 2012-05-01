@@ -3,17 +3,6 @@ scriptencoding utf-8
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
-let s:HANDLE_KEYS = []
-for lhs in split('!"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{}~', '\zs')
-  call add(s:HANDLE_KEYS, {'lhs': lhs})
-endfor
-call add(s:HANDLE_KEYS, {'lhs': '<BS>', 'char': '\<BS>'})
-call add(s:HANDLE_KEYS, {'lhs': '<C-h>', 'char': '\<C-h>'})
-call add(s:HANDLE_KEYS, {'lhs': '<Space>', 'char': ' '})
-call add(s:HANDLE_KEYS, {'lhs': '<Bar>', 'char': '\|'})
-call add(s:HANDLE_KEYS, {'lhs': '<C-[>', 'char': '\<C-[>'})
-call add(s:HANDLE_KEYS, {'lhs': '<C-m>', 'char': '\<C-m>'})
-
 let s:HANDLERS = {
       \ ' ': function('bim#handler#space'),
       \ "\<C-[>": function('bim#handler#escape'),
@@ -34,11 +23,12 @@ function! bim#enable()
   setlocal iminsert=1
   let b:bim = bim#engine#new()
   call bim#dict#load_all()
-  for key in s:HANDLE_KEYS
-    let lhs = key['lhs']
-    let rhs = printf('bim#_handle("%s")', get(key, 'char', lhs))
+  for nr in range(0x01, 0x7F)
+    let lhs = printf('<Char-%d>', nr)
+    let rhs = printf('bim#_handle(%d)', nr)
     execute 'lnoremap' '<expr>' lhs rhs
   endfor
+  execute 'lnoremap' '<expr>' '<BS>' 'bim#_handle(8)'
 endfunction
 
 function! bim#disable()
@@ -55,14 +45,15 @@ function! bim#toggle()
   endif
 endfunction
 
-function! bim#_handle(key)
+function! bim#_handle(nr)
+  let key = nr2char(a:nr)
   let bim = exists('b:bim') ? b:bim : bim#engine#new()
   for k in keys(s:HANDLERS)
-    if k ==# a:key
-      return s:HANDLERS[k](bim, a:key)
+    if k ==# key
+      return s:HANDLERS[k](bim, key)
     endif
   endfor
-  return bim#handler#else(bim, a:key)
+  return bim#handler#else(bim, key)
 endfunction
 
 let &cpoptions = s:save_cpoptions
