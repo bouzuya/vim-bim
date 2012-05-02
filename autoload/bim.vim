@@ -7,9 +7,9 @@ let s:HANDLERS = {
       \ ' ': function('bim#handler#space'),
       \ "\<C-[>": function('bim#handler#escape'),
       \ "\<C-h>": function('bim#handler#backspace'),
-      \ "\<BS>": function('bim#handler#backspace'),
       \ ':': function('bim#handler#colon'),
       \ ';': function('bim#handler#semicolon'),
+      \ "\<C-j>": function('bim#handler#ctrl_j'),
       \ "\<C-m>": function('bim#handler#semicolon'),
       \ 'l': function('bim#handler#l'),
       \ 'q': function('bim#handler#q')
@@ -29,19 +29,22 @@ function! bim#enable()
     execute 'lnoremap' '<expr>' lhs rhs
   endfor
   execute 'lnoremap' '<expr>' '<BS>' 'bim#_handle(8)'
+  execute 'lnoremap' '<expr>' '<Char-30>' 'bim#disable()'
+  return ''
 endfunction
 
 function! bim#disable()
   setlocal iminsert=0
   unlet! b:bim
-  execute 'lmapclear' '<buffer>'
+  execute 'lmapclear'
+  return ''
 endfunction
 
 function! bim#toggle()
   if bim#is_enabled()
-    call bim#disable()
+    return bim#disable()
   else
-    call bim#enable()
+    return bim#enable()
   endif
 endfunction
 
