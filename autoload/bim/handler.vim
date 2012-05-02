@@ -3,6 +3,11 @@ scriptencoding utf-8
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
+function! bim#handler#ctrl_j(bim, key)
+  let b = a:bim
+  return "\<C-R>=bim#disable()\<C-m>"
+endfunction
+
 function! bim#handler#space(bim, key)
   let b = a:bim
   if strchars(b.raw()) == 0
