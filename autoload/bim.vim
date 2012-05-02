@@ -48,12 +48,7 @@ endfunction
 function! bim#_handle(nr)
   let key = nr2char(a:nr)
   let bim = exists('b:bim') ? b:bim : bim#engine#new()
-  for k in keys(s:HANDLERS)
-    if k ==# key
-      return s:HANDLERS[k](bim, key)
-    endif
-  endfor
-  return bim#handler#else(bim, key)
+  return get(s:HANDLERS, key, function('bim#handler#else'))(bim, key)
 endfunction
 
 let &cpoptions = s:save_cpoptions
