@@ -27,16 +27,15 @@ function! bim#engine#hiragana2katakana(hiragana)
 endfunction
 
 function! s:d.raw()
-  return self._raw
+  return self._raw.raw()
 endfunction
 
 function! s:d.yomi()
-  let index = self._okuri_index - 1
-  return index >= 0 ? self._raw[:index] : self._raw
+  return self._raw.yomi()
 endfunction
 
 function! s:d.okuri()
-  return self.is_okuri() ? self._raw[self._okuri_index:] : ''
+  return self._raw.okuri()
 endfunction
 
 function! s:d.yomigana()
@@ -64,7 +63,7 @@ function! s:d.fixed()
 endfunction
 
 function! s:d.is_okuri()
-  return self._okuri_index != -1
+  return self._raw.is_okuri()
 endfunction
 
 function! s:d.candidate()
@@ -73,14 +72,14 @@ function! s:d.candidate()
 endfunction
 
 function! s:d.input(key)
-  let self._raw .= a:key
+  call self._raw.input(a:key)
 endfunction
 
 function! s:d.remove_last()
-  if self._okuri_index == strchars(self._raw)
-    let self._okuri_index = -1
-  else
-    let self._raw = substitute(self._raw, '^\(.*\).$', '\1', '')
+  let b = self._raw.is_okuri()
+  call self._raw.input_backspace()
+  let a = self._raw.is_okuri()
+  if b != a
     let self._kanji = ''
   endif
 endfunction
@@ -96,13 +95,7 @@ function! s:d.convert()
 endfunction
 
 function! s:d.start_okuri()
-  if self._okuri_index != -1
-    throw 'bim:bim.start_okuri():'
-  endif
-  if strchars(self._raw) == 0
-    throw 'bim:bim.start_okuri():'
-  endif
-  let self._okuri_index = strchars(self._raw)
+  call self._raw.input_okuri()
 endfunction
 
 function! s:d.fix()
@@ -137,8 +130,7 @@ endfunction
 
 function! s:d._fix(s)
   let self._fixed .= a:s
-  let self._okuri_index = -1
-  let self._raw = ''
+  let self._raw = bim#raw#new()
   let self._kanji = ''
 endfunction
 
@@ -177,8 +169,7 @@ function! s:d._init()
         \ 'convert': convert_mode
         \ }
   call extend(self, {
-        \ '_okuri_index': -1,
-        \ '_raw': '',
+        \ '_raw': bim#raw#new(),
         \ '_kanji': '',
         \ '_fixed': '',
         \ '_modes': modes,
