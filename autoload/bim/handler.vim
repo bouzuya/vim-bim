@@ -13,9 +13,7 @@ function! bim#handler#space(bim, key)
   if strchars(b.raw()) == 0
     return ' '
   endif
-  call b.convert()
-  call s:echo(b)
-  return ''
+  return b.mode('convert').handle(b, a:key)
 endfunction
 
 function! bim#handler#escape(bim, key)
@@ -112,6 +110,49 @@ function! bim#handler#else(bim, key)
   call s:echo(b)
   return ''
 endfunction
+
+function! bim#handler#c_h(bim, key)
+  let b = a:bim
+  call s:echo(b)
+  return ''
+endfunction
+
+function! bim#handler#c_j(bim, key)
+  let b = a:bim
+  call s:echo(b)
+  return ''
+endfunction
+
+function! bim#handler#c_k(bim, key)
+  let b = a:bim
+  call s:echo(b)
+  return ''
+endfunction
+
+function! bim#handler#c_l(bim, key)
+  let b = a:bim
+  call s:echo(b)
+  return ''
+endfunction
+
+function! bim#handler#c_space(bim, key)
+  let b = a:bim
+  call b.convert()
+  call s:echo(b)
+  return ''
+endfunction
+
+function! bim#handler#c_semicolon(bim, key)
+  let b = a:bim
+  return b.mode('default').handle(b, a:key)
+endfunction
+
+function! bim#handler#c_else(bim, key)
+  let b = a:bim
+  call s:echo(b)
+  return ''
+endfunction
+
 
 function! s:echo(bim)
   let save_more = &more

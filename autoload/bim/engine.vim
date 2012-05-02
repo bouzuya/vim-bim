@@ -124,6 +124,17 @@ function! s:d.fix_raw()
   call self._fix(self.raw())
 endfunction
 
+" getter/setter
+" mode([{name}])
+function! s:d.mode(...)
+  let name = get(a:000, 0, '')
+  if strchars(name) == 0
+    return self._mode
+  endif
+  let self._mode = get(self._modes, name, self._default_mode)
+  return self._mode
+endfunction
+
 function! s:d._fix(s)
   let self._fixed .= a:s
   let self._okuri_index = -1
@@ -142,11 +153,37 @@ function! s:d._romaji2hiragana(romaji, ...)
 endfunction
 
 function! s:d._init()
+  let default_mode = bim#mode#new('default', {
+        \ "\<C-h>": function('bim#handler#backspace'),
+        \ "\<C-j>": function('bim#handler#ctrl_j'),
+        \ "\<C-m>": function('bim#handler#semicolon'),
+        \ "\<C-[>": function('bim#handler#escape'),
+        \ ' ': function('bim#handler#space'),
+        \ ':': function('bim#handler#colon'),
+        \ ';': function('bim#handler#semicolon'),
+        \ 'l': function('bim#handler#l'),
+        \ 'q': function('bim#handler#q')
+        \ }, function('bim#handler#else'))
+  let convert_mode = bim#mode#new('convert', {
+        \ ' ': function('bim#handler#c_space'),
+        \ 'h': function('bim#handler#c_h'),
+        \ 'j': function('bim#handler#c_j'),
+        \ 'k': function('bim#handler#c_k'),
+        \ 'l': function('bim#handler#c_l'),
+        \ ';': function('bim#handler#c_semicolon')
+        \ }, function('bim#handler#else'))
+  let modes = {
+        \ 'default': default_mode,
+        \ 'convert': convert_mode
+        \ }
   call extend(self, {
         \ '_okuri_index': -1,
         \ '_raw': '',
         \ '_kanji': '',
-        \ '_fixed': ''
+        \ '_fixed': '',
+        \ '_modes': modes,
+        \ '_mode': default_mode,
+        \ '_default_mode': default_mode
         \ })
 endfunction
 

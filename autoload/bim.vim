@@ -3,18 +3,6 @@ scriptencoding utf-8
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
-let s:HANDLERS = {
-      \ ' ': function('bim#handler#space'),
-      \ "\<C-[>": function('bim#handler#escape'),
-      \ "\<C-h>": function('bim#handler#backspace'),
-      \ ':': function('bim#handler#colon'),
-      \ ';': function('bim#handler#semicolon'),
-      \ "\<C-j>": function('bim#handler#ctrl_j'),
-      \ "\<C-m>": function('bim#handler#semicolon'),
-      \ 'l': function('bim#handler#l'),
-      \ 'q': function('bim#handler#q')
-      \ }
-
 function! bim#is_enabled()
   return &l:iminsert == 1
 endfunction
@@ -51,7 +39,7 @@ endfunction
 function! bim#_handle(nr)
   let key = nr2char(a:nr)
   let bim = exists('b:bim') ? b:bim : bim#engine#new()
-  return get(s:HANDLERS, key, function('bim#handler#else'))(bim, key)
+  return bim.mode().handle(bim, key)
 endfunction
 
 let &cpoptions = s:save_cpoptions
