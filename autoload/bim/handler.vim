@@ -11,9 +11,17 @@ endfunction
 function! bim#handler#space(bim, key)
   let b = a:bim
   if strchars(b.raw()) == 0
-    return ' '
+    return a:key
   endif
   return b.mode('convert').handle(b, a:key)
+endfunction
+
+function! bim#handler#slash(bim, key)
+  let b = a:bim
+  if strchars(b.raw()) == 0
+    return a:key
+  endif
+  return b.mode('direct').handle(b, a:key)
 endfunction
 
 function! bim#handler#escape(bim, key)
@@ -111,6 +119,14 @@ function! bim#handler#else(bim, key)
   return ''
 endfunction
 
+function! bim#handler#c_q(bim, key)
+  let b = a:bim
+  call b.fix_katakana()
+  call b.mode('default')
+  call s:echo(b)
+  return ''
+endfunction
+
 function! bim#handler#c_h(bim, key)
   let b = a:bim
   call b.pager().prev_item()
@@ -141,39 +157,55 @@ endfunction
 
 function! bim#handler#c_space(bim, key)
   let b = a:bim
-  call b.convert()
+  call b.pager().next_item()
   call s:echo(b)
   return ''
 endfunction
 
+function! bim#handler#c_slash(bim, key)
+  let b = a:bim
+  return b.mode('direct').handle(b, a:key)
+endfunction
 function! bim#handler#c_semicolon(bim, key)
   let b = a:bim
-  return b.mode('default').handle(b, a:key)
+  call b.fix()
+  call b.mode('default')
+  call s:echo(b)
+  return ''
 endfunction
 
 function! bim#handler#c_else(bim, key)
-  let b = a:bim
-  call s:echo(b)
+  call s:echo(a:bim)
   return ''
 endfunction
 
+function! bim#handler#d_space(bim, key)
+  let b = a:bim
+  return b.mode('convert').handle(b, a:key)
+endfunction
+
+function! bim#handler#d_slash(bim, key)
+  let b = a:bim
+  call b.pager().next_item()
+  call s:echo(b)
+  return ''
+endfunction
 
 function! s:echo(bim)
   let save_more = &more
   try
     set nomore
-    let bim = a:bim
-    let is_conv = strchars(bim.kanji()) > 0
-    let conv = is_conv ? bim.kanji() : bim.yomigana()
-    let fmt = bim.is_okuri() ? '%s[%s]%s| [%s]%s|' : '%s[%s|%s] [%s|]%s'
-    let l1 = printf(fmt, bim.fixed(), conv, bim.okurigana(), bim.yomi(), bim.okuri())
-    let cand = bim.candidate()
-    let k = bim.kanji()
-    let idx = is_conv ? index(cand, k) : -1
-    let pager = bim#pager#new(cand, 7, idx)
-    let l2 = printf('(%d/%d)', pager.pageidx() + 1, pager.pagenum())
-    let l2 .= '[' . join(map(pager.page(), 'printf((v:val ==# k ? ''*%s*'' : '' %s ''), v:val)'), '') . ']'
-    redraw | echon l1 . "\n" . l2
+    let b = a:bim
+    let p = b.pager()
+    let i = p.item()
+    let conv = strchars(i) > 0 ? i : b.yomigana()
+    let fmt = b.is_okuri() ? '%s[%s]%s| [%s]%s|' : '%s[%s|%s] [%s|]%s'
+    let msg = ''
+    let msg .= printf(fmt, b.fixed(), conv, b.okurigana(), b.yomi(), b.okuri())
+    let msg .= "\n"
+    let msg .= printf('(%d/%d)', p.pageidx() + 1, p.pagenum())
+    let msg .= '[' . join(map(p.page(), 'printf((v:val ==# i ? ''*%s*'' : '' %s ''), v:val)'), '') . ']'
+    redraw | echon msg
   finally
     let &more = save_more
   endtry

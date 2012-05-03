@@ -54,10 +54,6 @@ function! s:d.okurirest()
   return get(self._romaji2hiragana(self.okuri()), 'rest', '')
 endfunction
 
-function! s:d.kanji()
-  return self.pager().item()
-endfunction
-
 function! s:d.fixed()
   return self._fixed
 endfunction
@@ -66,9 +62,18 @@ function! s:d.is_okuri()
   return self._raw.is_okuri()
 endfunction
 
+function! s:d._keyword()
+  let name = self.mode().name()
+  if name ==# 'direct'
+    let keyword = self.yomi()
+  else
+    let keyword = self.yomigana() . self.okuri()[0]
+  endif
+  return keyword
+endfunction
+
 function! s:d.candidate()
-  let keyword = self.yomigana() . self.okuri()[0]
-  return bim#dict#search(keyword)
+  return bim#dict#search(self._keyword())
 endfunction
 
 function! s:d.input(key)
@@ -95,11 +100,11 @@ endfunction
 
 function! s:d.fix()
   let result = ''
-  let conv = self.kanji()
+  let conv = self.pager().item()
   if strchars(conv) == 0
     let result = self.yomigana() . self.okurigana()
   else
-    call bim#dict#add_word(self.yomigana() . self.okuri()[0], conv)
+    call bim#dict#add_word(self._keyword(), conv)
     let result = conv . self.okurigana()
   endif
   call self._fix(result)
@@ -110,7 +115,7 @@ function! s:d.fix_katakana()
 endfunction
 
 function! s:d.fix_raw()
-  call self._fix(self.raw())
+  call self._fix(self.yomi() . self.okurigana())
 endfunction
 
 " getter/setter
@@ -121,6 +126,8 @@ function! s:d.mode(...)
     return self._mode
   endif
   let self._mode = get(self._modes, name, self._default_mode)
+  " TODO:
+  let self._pager = self._new_pager()
   return self._mode
 endfunction
 
@@ -152,22 +159,36 @@ function! s:d._init()
         \ "\<C-m>": function('bim#handler#semicolon'),
         \ "\<C-[>": function('bim#handler#escape'),
         \ ' ': function('bim#handler#space'),
+        \ '/': function('bim#handler#slash'),
+        \ 'l': function('bim#handler#l'),
+        \ 'q': function('bim#handler#q'),
         \ ':': function('bim#handler#colon'),
         \ ';': function('bim#handler#semicolon'),
-        \ 'l': function('bim#handler#l'),
-        \ 'q': function('bim#handler#q')
         \ }, function('bim#handler#else'))
   let convert_mode = bim#mode#new('convert', {
         \ ' ': function('bim#handler#c_space'),
+        \ '/': function('bim#handler#c_slash'),
         \ 'h': function('bim#handler#c_h'),
         \ 'j': function('bim#handler#c_j'),
         \ 'k': function('bim#handler#c_k'),
         \ 'l': function('bim#handler#c_l'),
+        \ 'q': function('bim#handler#c_q'),
         \ ';': function('bim#handler#c_semicolon')
-        \ }, function('bim#handler#else'))
+        \ }, function('bim#handler#c_else'))
+  let direct_mode = bim#mode#new('direct', {
+        \ ' ': function('bim#handler#d_space'),
+        \ '/': function('bim#handler#d_slash'),
+        \ 'h': function('bim#handler#c_h'),
+        \ 'j': function('bim#handler#c_j'),
+        \ 'k': function('bim#handler#c_k'),
+        \ 'l': function('bim#handler#c_l'),
+        \ 'q': function('bim#handler#c_q'),
+        \ ';': function('bim#handler#c_semicolon')
+        \ }, function('bim#handler#c_else'))
   let modes = {
         \ 'default': default_mode,
-        \ 'convert': convert_mode
+        \ 'convert': convert_mode,
+        \ 'direct': direct_mode
         \ }
   call extend(self, {
         \ '_raw': bim#raw#new(),
