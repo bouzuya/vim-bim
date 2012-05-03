@@ -55,7 +55,7 @@ function! s:d.okurirest()
 endfunction
 
 function! s:d.kanji()
-  return self._kanji
+  return self.pager().item()
 endfunction
 
 function! s:d.fixed()
@@ -73,25 +73,20 @@ endfunction
 
 function! s:d.input(key)
   call self._raw.input(a:key)
+  let self._pager = self._new_pager()
 endfunction
 
 function! s:d.remove_last()
-  let b = self._raw.is_okuri()
   call self._raw.input_backspace()
-  let a = self._raw.is_okuri()
-  if b != a
-    let self._kanji = ''
-  endif
+  let self._pager = self._new_pager()
 endfunction
 
 function! s:d.convert()
-  let cand = self.candidate()
-  if empty(cand)
-    let self._kanji = ''
-    return
-  endif
-  let index = index(cand, self.kanji())
-  let self._kanji = get(cand, index + 1, cand[0])
+  call self.pager().next_item()
+endfunction
+
+function! s:d.pager()
+  return self._pager
 endfunction
 
 function! s:d.start_okuri()
@@ -100,11 +95,12 @@ endfunction
 
 function! s:d.fix()
   let result = ''
-  if strchars(self.kanji()) == 0
+  let conv = self.kanji()
+  if strchars(conv) == 0
     let result = self.yomigana() . self.okurigana()
   else
-    call bim#dict#add_word(self.yomigana() . self.okuri()[0], self.kanji())
-    let result = self.kanji() . self.okurigana()
+    call bim#dict#add_word(self.yomigana() . self.okuri()[0], conv)
+    let result = conv . self.okurigana()
   endif
   call self._fix(result)
 endfunction
@@ -131,8 +127,13 @@ endfunction
 function! s:d._fix(s)
   let self._fixed .= a:s
   let self._raw = bim#raw#new()
-  let self._kanji = ''
+  let self._pager = self._new_pager()
 endfunction
+
+function! s:d._new_pager()
+  return bim#pager#new(self.candidate(), 7, -1)
+endfunction
+
 
 " _romaji2hiragana({romaji}[, {proc_last}])
 function! s:d._romaji2hiragana(romaji, ...)
@@ -170,12 +171,12 @@ function! s:d._init()
         \ }
   call extend(self, {
         \ '_raw': bim#raw#new(),
-        \ '_kanji': '',
         \ '_fixed': '',
         \ '_modes': modes,
         \ '_mode': default_mode,
         \ '_default_mode': default_mode
         \ })
+  let self._pager = self._new_pager()
 endfunction
 
 let &cpoptions = s:save_cpoptions

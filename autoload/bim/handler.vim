@@ -113,24 +113,28 @@ endfunction
 
 function! bim#handler#c_h(bim, key)
   let b = a:bim
+  call b.pager().prev_item()
   call s:echo(b)
   return ''
 endfunction
 
 function! bim#handler#c_j(bim, key)
   let b = a:bim
+  call b.pager().next_page()
   call s:echo(b)
   return ''
 endfunction
 
 function! bim#handler#c_k(bim, key)
   let b = a:bim
+  call b.pager().prev_page()
   call s:echo(b)
   return ''
 endfunction
 
 function! bim#handler#c_l(bim, key)
   let b = a:bim
+  call b.pager().next_item()
   call s:echo(b)
   return ''
 endfunction
